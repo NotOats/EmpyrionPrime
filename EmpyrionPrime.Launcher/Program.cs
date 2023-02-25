@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
+using Microsoft.Extensions.Options;
 
 var host = Host.CreateApplicationBuilder();
 
@@ -40,13 +40,13 @@ internal static class ServiceCollectionExtensions
         services.AddSingleton<IRemoteEmpyrion>(provider =>
         {
             var logger = provider.GetRequiredService<ILogger<EpmClient>>();
-            var settings = provider.GetRequiredService<EmpyrionSettings>();
+            var settings = provider.GetRequiredService<IOptions<EmpyrionSettings>>();
 
-            var clientId = settings.EpmClientId;
+            var clientId = settings.Value.EpmClientId;
             if (clientId == -1)
                 clientId = Environment.ProcessId;
 
-            var client = new EpmClient(logger, settings.EpmAddress, settings.EpmPort, clientId);
+            var client = new EpmClient(logger, settings.Value.EpmAddress, settings.Value.EpmPort, clientId);
             client.Start();
 
             return client;

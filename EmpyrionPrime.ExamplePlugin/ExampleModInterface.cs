@@ -20,7 +20,7 @@ namespace EmpyrionPrime.ExamplePlugin
 
         public void Game_Event(CmdId eventId, ushort seqNr, object data)
         {
-            _logger.LogInformation("Game_Event(eventId: {eventId}, seqNr: {seqNr}, data.Type: {data}", eventId, seqNr, data.GetType());
+            _logger.LogInformation("Game_Event(eventId: {eventId}, seqNr: {seqNr}, data.Type: {data})", eventId, seqNr, data?.GetType());
         }
 
         public void Game_Exit()
