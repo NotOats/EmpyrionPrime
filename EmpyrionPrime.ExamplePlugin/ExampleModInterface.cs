@@ -1,4 +1,5 @@
-﻿using Eleon.Modding;
+﻿using Eleon;
+using Eleon.Modding;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,13 @@ namespace EmpyrionPrime.ExamplePlugin
         public void Game_Event(CmdId eventId, ushort seqNr, object data)
         {
             _logger.LogInformation("Game_Event(eventId: {eventId}, seqNr: {seqNr}, data.Type: {data})", eventId, seqNr, data?.GetType());
+
+            // Weird EPM custom event for chat since they don't send regular Event_ChatMessage commands
+            if((int)eventId == 201)
+            {
+                var message = data as MessageData;
+                _logger.LogInformation("Chat message - [{Channel}] E<{Id}>: {Text}", message?.Channel, message?.SenderEntityId, message?.Text);
+            }
         }
 
         public void Game_Exit()

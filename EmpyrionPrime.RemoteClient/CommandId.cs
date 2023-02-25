@@ -82,6 +82,9 @@ namespace EmpyrionPrime.RemoteClient
 		Event_PdaStateChange                     = CmdId.Event_PdaStateChange,
 		Event_GameEvent                          = CmdId.Event_GameEvent,
 
-		// Custom Events
+		// Custom Events from EPM
+		Request_Chat                             = 200,
+		Event_Chat                               = 201,
+		Request_DialogAction                     = 202,
 	}
 }

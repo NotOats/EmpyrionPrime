@@ -59,14 +59,14 @@ namespace EmpyrionPrime.RemoteClient.Epm
 
                 if (!_readThread.Join(1000))
                 {
-                    _logger.LogError("Failed to stop read thread");
-                    _readThread.Abort();
+                    _logger.LogError("Failed to stop read thread, interrupting...");
+                    _readThread.Interrupt();
                 }
 
                 if (!_writeThread.Join(1000))
                 {
-                    _logger.LogError("Failed to stop write thread");
-                    _writeThread.Abort();
+                    _logger.LogError("Failed to stop write thread, interrupting...");
+                    _writeThread.Interrupt();
                 }
 
                 _tcpClient?.Close();
@@ -117,7 +117,11 @@ namespace EmpyrionPrime.RemoteClient.Epm
 
             while (!token.IsCancellationRequested)
             {
-                _writeNotifier.Wait(token);
+                try
+                {
+                    _writeNotifier.Wait(token);
+                }
+                catch (OperationCanceledException) { }
 
                 EnsureConnected();
                 ProcessWriteQueue(token);

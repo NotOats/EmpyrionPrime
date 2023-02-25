@@ -1,4 +1,5 @@
-﻿using Eleon.Modding;
+﻿using Eleon;
+using Eleon.Modding;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -113,8 +114,10 @@ namespace EmpyrionPrime.RemoteClient
             { CommandId.Event_PdaStateChange,                     new ProtoBufWrapper<PdaStateInfo>() },
             { CommandId.Event_GameEvent,                          new ProtoBufWrapper<GameEventData>() },
 
-            // Custom Events
-
+            // Custom Events from EPM
+            { CommandId.Request_Chat,                             new ProtoBufWrapper<MessageData>() },
+            { CommandId.Event_Chat,                               new ProtoBufWrapper<MessageData>() },
+            { CommandId.Request_DialogAction,                     null },
         };
 
         private interface IProfoBufWrapper
