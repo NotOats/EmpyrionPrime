@@ -1,0 +1,22 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="$(SolutionDir)\dependencies\Mif.dll" #>
+<#@ import namespace="Eleon.Modding" #>
+<#@ output extension=".cs" #>
+using Eleon.Modding;
+
+namespace EmpyrionPrime.RemoteClient
+{
+	public enum CommandId : int
+	{
+		// Imported from Eleon.Modding
+<# 
+		foreach(string name in Enum.GetNames(typeof(CmdId)))
+		{
+			WriteLine($"\t\t{name,-40} = CmdId.{name},");
+		}
+#>
+
+		// Custom Events
+	}
+}
