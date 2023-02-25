@@ -1,11 +1,4 @@
-﻿using Eleon.Modding;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Text;
-
-namespace EmpyrionPrime.RemoteClient
+﻿namespace EmpyrionPrime.RemoteClient
 {
     public readonly struct GameEvent
     {
