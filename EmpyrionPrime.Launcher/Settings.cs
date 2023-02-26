@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EmpyrionPrime.Launcher;
+﻿namespace EmpyrionPrime.Launcher;
 
 internal class Settings
 {
     public required EmpyrionSettings Empyrion { get; set; }
+    public required PluginsSettings Plugins { get; set; }
 
 }
 
@@ -20,4 +15,13 @@ internal class EmpyrionSettings
     public string EpmAddress { get; set; } = "127.0.0.1";
     public int EpmPort { get; set; } = 12345;
     public int EpmClientId { get; set; } = -1;
+}
+
+internal class PluginsSettings
+{
+    public string Folder { get; set; } = "Plugins";
+
+    public int GameUpdateTps { get; set; } = 20;
+
+    public bool AutoReload { get; set; } = true;
 }

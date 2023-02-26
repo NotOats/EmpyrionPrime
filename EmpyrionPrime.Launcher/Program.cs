@@ -23,11 +23,12 @@ host.Logging.AddConsole();
 
 // Specific Settings
 host.Services.Configure<EmpyrionSettings>(host.Configuration.GetSection("Empyrion"));
+host.Services.Configure<PluginsSettings>(host.Configuration.GetSection("Plugins"));
 
 // Services
 host.Services.AddRemoteEmpyrion();
-host.Services.RegisterPluginHosts();
-host.Services.AddHostedService<ModInterfaceManager>();
+host.Services.AddSingleton<IPluginManager, PluginManager>();
+host.Services.AddHostedService<ModInterfaceBroker>();
 
 // Run the app
 var app = host.Build();
@@ -51,22 +52,5 @@ internal static class ServiceCollectionExtensions
 
             return client;
         });
-    }
-
-    public static void RegisterPluginHosts(this IServiceCollection services)
-    {
-        var pluginPath = Path.Join(Environment.CurrentDirectory, "Plugins");
-        if (!Directory.Exists(pluginPath))
-            return;
-
-        var assemblyPaths = PluginFinder.FindAssembliesWithPlugins(pluginPath);
-        foreach(var assemblyPath in assemblyPaths)
-        {
-            services.AddSingleton<IPluginHost>(provider =>
-            {
-                var logger = provider.GetRequiredService<ILogger<PluginHost>>();
-                return new PluginHost(provider, logger, assemblyPath);
-            });
-        }
     }
 }

@@ -1,49 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.Loader;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace EmpyrionPrime.Launcher.Plugins
+namespace EmpyrionPrime.Launcher.Plugins;
+
+internal class PluginLoadContext : AssemblyLoadContext
 {
-    internal class PluginLoadContext : AssemblyLoadContext
+    private readonly AssemblyDependencyResolver _resolver;
+
+    public PluginLoadContext(string pluginPath) : base(true)
     {
-        private readonly AssemblyDependencyResolver _resolver;
+        if(string.IsNullOrEmpty(pluginPath))
+            throw new ArgumentNullException(nameof(pluginPath));
 
-        public PluginLoadContext(string pluginPath) : base(true)
-        {
-            if(string.IsNullOrEmpty(pluginPath))
-                throw new ArgumentNullException(nameof(pluginPath));
+        if (!File.Exists(pluginPath))
+            throw new FileNotFoundException("Invalid plugin path", pluginPath);
 
-            if (!File.Exists(pluginPath))
-                throw new FileNotFoundException("Invalid plugin path", pluginPath);
+        _resolver = new AssemblyDependencyResolver(pluginPath);
+    }
 
-            _resolver = new AssemblyDependencyResolver(pluginPath);
-        }
+    protected override Assembly? Load(AssemblyName assemblyName)
+    {
+        var assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
 
-        protected override Assembly? Load(AssemblyName assemblyName)
-        {
-            var assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
+        if (assemblyPath == null)
+            return null;
 
-            if (assemblyPath == null)
-                return null;
+        //return LoadFromAssemblyPath(assemblyPath);
+        using var stream = File.Open(assemblyPath, FileMode.Open, FileAccess.Read);
 
-            //return LoadFromAssemblyPath(assemblyPath);
-            using var stream = File.Open(assemblyPath, FileMode.Open, FileAccess.Read);
+        return LoadFromStream(stream);
+    }
 
-            return LoadFromStream(stream);
-        }
+    protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
+    {
+        var libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
 
-        protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
-        {
-            var libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
+        if(libraryPath == null)
+            return IntPtr.Zero;
 
-            if(libraryPath == null)
-                return IntPtr.Zero;
-
-            return LoadUnmanagedDllFromPath(libraryPath);
-        }
+        return LoadUnmanagedDllFromPath(libraryPath);
     }
 }
