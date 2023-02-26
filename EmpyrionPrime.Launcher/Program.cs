@@ -1,5 +1,7 @@
 ﻿using EmpyrionPrime.Launcher;
+using EmpyrionPrime.Launcher.Empyrion;
 using EmpyrionPrime.Launcher.Plugins;
+using EmpyrionPrime.Mod;
 using EmpyrionPrime.RemoteClient;
 using EmpyrionPrime.RemoteClient.Epm;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +29,7 @@ host.Services.Configure<PluginsSettings>(host.Configuration.GetSection("Plugins"
 
 // Services
 host.Services.AddRemoteEmpyrion();
+host.Services.AddSingleton<IEmpyrionGameApi, EmpyrionGameApi>();
 host.Services.AddSingleton<IPluginManager, PluginManager>();
 host.Services.AddHostedService<ModInterfaceBroker>();
 

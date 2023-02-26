@@ -1,4 +1,5 @@
 ﻿using Eleon.Modding;
+using EmpyrionPrime.Launcher.Empyrion;
 using EmpyrionPrime.Launcher.Plugins;
 using EmpyrionPrime.Mod;
 using EmpyrionPrime.RemoteClient;
@@ -13,20 +14,49 @@ internal class ModInterfaceBroker : BackgroundService
     private readonly ILogger<ModInterfaceBroker> _logger;
     private readonly IPluginManager _pluginManager;
     private readonly IRemoteEmpyrion _remoteEmpyrion;
+    private readonly IEmpyrionGameApi _empyrionGameApi;
     private readonly int _targetUpdateTps;
 
+    private bool _disposed = false;
+
     public ModInterfaceBroker(
-        ILogger<ModInterfaceBroker> logger, 
+        ILogger<ModInterfaceBroker> logger,
+        IOptions<PluginsSettings> settings,
         IPluginManager pluginManager, 
         IRemoteEmpyrion remoteEmpyrion, 
-        IOptions<PluginsSettings> settings)
+        IEmpyrionGameApi empyrionGameApi)
     {
         _logger = logger;
         _pluginManager = pluginManager;
         _remoteEmpyrion = remoteEmpyrion;
+        _empyrionGameApi = empyrionGameApi;
         _targetUpdateTps = settings.Value.GameUpdateTps;
 
+        // Start each plugin
+        _pluginManager.ExecuteOnEachPlugin(plugin =>
+        {
+            plugin.ModInterface.Game_Start(_empyrionGameApi.ModGameAPI);
+        });
+
         _remoteEmpyrion.GameEventHandler += PropagateGameEvent;
+    }
+
+    public override void Dispose()
+    {
+        if (_disposed)
+            return;
+
+        // Calls the cancellation token
+        base.Dispose();
+
+        // Remove event handler and call exit on each plugin
+        _remoteEmpyrion.GameEventHandler -= PropagateGameEvent;
+        _pluginManager.ExecuteOnEachPlugin(plugin =>
+        {
+            plugin.ModInterface.Game_Exit();
+        });
+
+        _disposed = true;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

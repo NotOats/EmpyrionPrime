@@ -33,11 +33,15 @@ namespace EmpyrionPrime.ExamplePlugin
 
         public void Game_Exit()
         {
+            _logger.LogInformation("Game_Exit()");
         }
 
         public void Game_Start(ModGameAPI dediAPI)
         {
+            _logger.LogInformation("Game_Start(dediApi: {ModGameApi})", dediAPI);
+
             _gameApi = dediAPI;
+            _gameApi.Console_Write("ExampleModInterface: Test console message");
         }
 
         public void Game_Update()
