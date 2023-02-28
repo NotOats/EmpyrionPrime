@@ -5,6 +5,19 @@ namespace EmpyrionPrime.Launcher.Plugins;
 
 internal class PluginLoadContext : AssemblyLoadContext
 {
+    private static readonly IReadOnlyList<Assembly> IgnoredAssemblies = new List<Assembly>
+    {
+        // Eleon mod assemblies
+        typeof(Eleon.Modding.ModInterface).Assembly,
+        typeof(Eleon.Modding.IMod).Assembly,
+
+        // Libraries
+        typeof(Microsoft.Extensions.Logging.ILogger<>).Assembly,
+
+        // Plugin Interface
+        typeof(Mod.IEmpyrionPlugin).Assembly,
+    };
+
     private readonly AssemblyDependencyResolver _resolver;
 
     public PluginLoadContext(string pluginPath) : base(true)
@@ -20,8 +33,10 @@ internal class PluginLoadContext : AssemblyLoadContext
 
     protected override Assembly? Load(AssemblyName assemblyName)
     {
-        var assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
+        if (IgnoredAssemblies.Any(assembly => assemblyName.Name == assembly.GetName()?.Name))
+            return null;
 
+        var assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
         if (assemblyPath == null)
             return null;
 

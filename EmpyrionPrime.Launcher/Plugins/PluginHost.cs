@@ -64,7 +64,9 @@ internal class PluginHost : IPluginHost
             if (instance == null)
                 continue;
 
-            _logger.LogInformation("Loaded {AssemblyName} - {PluginName} v{Version}", AssemblyName, instance.Name, instance.Version);
+            _logger.LogInformation("Loaded {AssemblyName} - {PluginName} v{Version} by {Author}", 
+                AssemblyName, instance.Name, instance.Version, instance.Author);
+
             _plugins.Add(instance);
         }
     }

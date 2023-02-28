@@ -6,15 +6,15 @@ namespace EmpyrionPrime.ExamplePlugin;
 
 public class EntryPoint : IEmpyrionPlugin
 {
-    public string Name { get; } = "Example Plugin";
-
-    public Version Version { get; } = new Version(1, 0);
+    public string Name => "Example Plugin";
+    public string Author => "NotOats";
+    public Version Version => new(1, 0);
 
     public ModInterface ModInterface { get; }
 
+    // Dependency Injection can be used in IEmpyrionPlugin constructors.
     public EntryPoint(ILogger<EntryPoint> logger)
     {
-        // Dependency Injection is used in IEmpyrionPlugin constructors.
         logger.LogInformation("Example Plugin loaded");
 
         // Injected classes can be passed to your ModInterface
