@@ -12,15 +12,15 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <ProjectReference Include="..\EmpyrionPrime.Mod\EmpyrionPrime.Mod.csproj" />
+    <ProjectReference Include="..\..\EmpyrionPrime.Mod\EmpyrionPrime.Mod.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Mif">
-      <HintPath>..\dependencies\Mif.dll</HintPath>
+      <HintPath>..\..\dependencies\Mif.dll</HintPath>
     </Reference>
     <Reference Include="ModApi">
-      <HintPath>..\dependencies\ModApi.dll</HintPath>
+      <HintPath>..\..\dependencies\ModApi.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmpyrionPrime.Launcher", "E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmpyrionPrime.RemoteClient", "EmpyrionPrime.RemoteClient\EmpyrionPrime.RemoteClient.csproj", "{21ED9D35-24B1-4A31-B9DA-F6E7F55A0022}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmpyrionPrime.RemoteClient.Tests", "EmpyrionPrime.RemoteClient.Tests\EmpyrionPrime.RemoteClient.Tests.csproj", "{4ED01FF4-5851-49C5-BEA0-49784793A382}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmpyrionPrime.RemoteClient.Tests", "EmpyrionPrime.RemoteClient.Tests\EmpyrionPrime.RemoteClient.Tests.csproj", "{4ED01FF4-5851-49C5-BEA0-49784793A382}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1857379F-6897-4AD4-A687-1FF17899FECE}"
 	ProjectSection(SolutionItems) = preProject
@@ -17,7 +17,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmpyrionPrime.ExamplePlugin", "EmpyrionPrime.ExamplePlugin\EmpyrionPrime.ExamplePlugin.csproj", "{DDB20639-FB4E-4503-980D-D8B9549A3741}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExamplePlugins", "ExamplePlugins", "{D6B0BDC2-24E5-4F70-89DB-87D85A2522C9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicPlugin", "ExamplePlugins\BasicPlugin\BasicPlugin.csproj", "{E95E66E2-F50E-4B68-9FF7-DC8B261C36D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseModPlugin", "ExamplePlugins\BaseModPlugin\BaseModPlugin.csproj", "{C5FED5B1-4E12-4B03-89E7-18FBFB40B430}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,13 +45,21 @@ Global
 		{4ED01FF4-5851-49C5-BEA0-49784793A382}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4ED01FF4-5851-49C5-BEA0-49784793A382}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4ED01FF4-5851-49C5-BEA0-49784793A382}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DDB20639-FB4E-4503-980D-D8B9549A3741}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DDB20639-FB4E-4503-980D-D8B9549A3741}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DDB20639-FB4E-4503-980D-D8B9549A3741}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DDB20639-FB4E-4503-980D-D8B9549A3741}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E95E66E2-F50E-4B68-9FF7-DC8B261C36D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E95E66E2-F50E-4B68-9FF7-DC8B261C36D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E95E66E2-F50E-4B68-9FF7-DC8B261C36D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E95E66E2-F50E-4B68-9FF7-DC8B261C36D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5FED5B1-4E12-4B03-89E7-18FBFB40B430}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5FED5B1-4E12-4B03-89E7-18FBFB40B430}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5FED5B1-4E12-4B03-89E7-18FBFB40B430}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5FED5B1-4E12-4B03-89E7-18FBFB40B430}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E95E66E2-F50E-4B68-9FF7-DC8B261C36D6} = {D6B0BDC2-24E5-4F70-89DB-87D85A2522C9}
+		{C5FED5B1-4E12-4B03-89E7-18FBFB40B430} = {D6B0BDC2-24E5-4F70-89DB-87D85A2522C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {563B8DBA-38A9-47CD-852E-602F254AA43D}

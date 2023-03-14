@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "BasicPlugin": {
+      "commandName": "Project"
+    }
+  }
+}

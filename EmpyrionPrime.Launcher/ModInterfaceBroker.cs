@@ -1,7 +1,6 @@
 ﻿using Eleon.Modding;
 using EmpyrionPrime.Launcher.Empyrion;
 using EmpyrionPrime.Launcher.Plugins;
-using EmpyrionPrime.Mod;
 using EmpyrionPrime.RemoteClient;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

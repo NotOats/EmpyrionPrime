@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<EnableDynamicLoading>true</EnableDynamicLoading>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\EmpyrionPrime.Mod\EmpyrionPrime.Mod.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Mif">
+      <HintPath>..\..\dependencies\Mif.dll</HintPath>
+    </Reference>
+    <Reference Include="ModApi">
+      <HintPath>..\..\dependencies\ModApi.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
