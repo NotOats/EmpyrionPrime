@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\EmpyrionPrime.Mod\EmpyrionPrime.Mod.csproj" />
+    <ProjectReference Include="..\..\EmpyrionPrime.Plugin\EmpyrionPrime.Plugin.csproj" />
   </ItemGroup>
 
   <ItemGroup>

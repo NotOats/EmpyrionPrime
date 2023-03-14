@@ -1,6 +1,6 @@
 ﻿using Eleon.Modding;
 
-namespace EmpyrionPrime.Mod
+namespace EmpyrionPrime.Plugin
 {
     public interface IEmpyrionGameApi
     {

@@ -1,11 +1,6 @@
 ﻿using Eleon.Modding;
-using EmpyrionPrime.Mod;
+using EmpyrionPrime.Plugin;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseModPlugin;
 

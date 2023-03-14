@@ -4,13 +4,13 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
-namespace EmpyrionPrime.Mod.Framework
+namespace EmpyrionPrime.ModFramework
 {
     public class RequestBroker
     {
         private readonly ILogger _logger;
         private readonly ModGameAPI _gameApi;
-        private readonly ConcurrentDictionary<ushort, TaskCompletionSource<object>> _pendingRequests = 
+        private readonly ConcurrentDictionary<ushort, TaskCompletionSource<object>> _pendingRequests =
             new ConcurrentDictionary<ushort, TaskCompletionSource<object>>();
 
         private readonly static object _sequenceLock = new object();
@@ -31,9 +31,9 @@ namespace EmpyrionPrime.Mod.Framework
 
             do
             {
-                lock(_sequenceLock)
+                lock (_sequenceLock)
                 {
-                    if(_nextSequenceNumber == ushort.MaxValue)
+                    if (_nextSequenceNumber == ushort.MaxValue)
                         _nextSequenceNumber = _sequenceStartNumber;
 
                     sequenceNumber = (ushort)_nextSequenceNumber++;

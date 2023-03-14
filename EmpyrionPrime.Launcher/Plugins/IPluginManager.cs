@@ -1,4 +1,4 @@
-﻿using EmpyrionPrime.Mod;
+﻿using EmpyrionPrime.Plugin;
 
 namespace EmpyrionPrime.Launcher.Plugins;
 

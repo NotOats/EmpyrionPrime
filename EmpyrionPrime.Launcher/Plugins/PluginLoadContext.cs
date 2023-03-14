@@ -15,7 +15,7 @@ internal class PluginLoadContext : AssemblyLoadContext
         typeof(Microsoft.Extensions.Logging.ILogger<>).Assembly,
 
         // Plugin Interface
-        typeof(Mod.IEmpyrionPlugin).Assembly,
+        typeof(Plugin.IEmpyrionPlugin).Assembly,
     };
 
     private readonly AssemblyDependencyResolver _resolver;

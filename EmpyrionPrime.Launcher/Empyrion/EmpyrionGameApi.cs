@@ -1,5 +1,5 @@
 ﻿using Eleon.Modding;
-using EmpyrionPrime.Mod;
+using EmpyrionPrime.Plugin;
 using EmpyrionPrime.RemoteClient;
 using Microsoft.Extensions.Logging;
 

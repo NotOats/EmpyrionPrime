@@ -1,7 +1,7 @@
 ﻿using Eleon.Modding;
 using System;
 
-namespace EmpyrionPrime.Mod
+namespace EmpyrionPrime.Plugin
 {
     public interface IEmpyrionPlugin
     {

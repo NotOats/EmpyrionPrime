@@ -1,5 +1,5 @@
 ﻿using Eleon.Modding;
-using EmpyrionPrime.Mod;
+using EmpyrionPrime.Plugin;
 using Microsoft.Extensions.Logging;
 
 namespace BasicPlugin;

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace EmpyrionPrime.Mod.Framework
+namespace EmpyrionPrime.ModFramework
 {
     public abstract class BaseMod : ModInterface
     {
