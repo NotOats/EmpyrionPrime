@@ -11,31 +11,34 @@ namespace EmpyrionPrime.Launcher;
 
 internal class ModInterfaceBroker : BackgroundService
 {
+    private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger<ModInterfaceBroker> _logger;
     private readonly IPluginManager _pluginManager;
     private readonly IRemoteEmpyrion _remoteEmpyrion;
-    private readonly IEmpyrionGameApi _empyrionGameApi;
+
     private readonly int _targetUpdateTps;
 
     private bool _disposed = false;
 
     public ModInterfaceBroker(
-        ILogger<ModInterfaceBroker> logger,
+        ILoggerFactory logger,
         IOptions<PluginsSettings> settings,
         IPluginManager pluginManager, 
-        IRemoteEmpyrion remoteEmpyrion, 
-        IEmpyrionGameApi empyrionGameApi)
+        IRemoteEmpyrion remoteEmpyrion)
     {
-        _logger = logger;
+        _loggerFactory = logger;
+        _logger = logger.CreateLogger<ModInterfaceBroker>();
         _pluginManager = pluginManager;
         _remoteEmpyrion = remoteEmpyrion;
-        _empyrionGameApi = empyrionGameApi;
         _targetUpdateTps = settings.Value.GameUpdateTps;
 
         // Start each plugin
         _pluginManager.ExecuteOnEachPlugin(plugin =>
         {
-            plugin.ModInterface.Game_Start(_empyrionGameApi.ModGameAPI);
+            var pluginLogger = _loggerFactory.CreateLogger(plugin.GetType());
+            var gameApi = new EmpyrionGameApi(pluginLogger, _remoteEmpyrion);
+
+            plugin.ModInterface.Game_Start(gameApi.ModGameAPI);
         });
 
         _remoteEmpyrion.GameEventHandler += PropagateGameEvent;

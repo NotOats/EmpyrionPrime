@@ -1,19 +1,13 @@
 ﻿using Eleon.Modding;
 using EmpyrionPrime.Mod;
 using EmpyrionPrime.RemoteClient;
-using EmpyrionPrime.RemoteClient.Api;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EmpyrionPrime.Launcher.Empyrion;
 
 internal class EmpyrionGameApi : IEmpyrionGameApi, IDisposable
 {
-    private readonly ILogger<EmpyrionGameApi> _logger;
+    private readonly ILogger _logger;
     private readonly IRemoteEmpyrion _remoteEmpyrion;
     private readonly RemoteModGameApi _remoteModGameApi;
 
@@ -22,7 +16,7 @@ internal class EmpyrionGameApi : IEmpyrionGameApi, IDisposable
         get { return _remoteModGameApi; }
     }
 
-    public EmpyrionGameApi(ILogger<EmpyrionGameApi> logger, IRemoteEmpyrion remoteEmpyrion)
+    public EmpyrionGameApi(ILogger logger, IRemoteEmpyrion remoteEmpyrion)
     {
         _logger = logger;
         _remoteEmpyrion = remoteEmpyrion;
@@ -40,7 +34,7 @@ internal class EmpyrionGameApi : IEmpyrionGameApi, IDisposable
 
     private void HandleConsoleWrite(string text)
     {
-        _logger.LogInformation("ModGameAPI.Console_Write: {text}", text);
+        _logger.LogInformation("{text}", text);
     }
 
     private ulong HandleGetTickTime()

@@ -28,8 +28,8 @@ host.Services.Configure<EmpyrionSettings>(host.Configuration.GetSection("Empyrio
 host.Services.Configure<PluginsSettings>(host.Configuration.GetSection("Plugins"));
 
 // Services
+host.Services.Configure<ConsoleLifetimeOptions>(opts => opts.SuppressStatusMessages = true);
 host.Services.AddRemoteEmpyrion();
-host.Services.AddSingleton<IEmpyrionGameApi, EmpyrionGameApi>();
 host.Services.AddSingleton<IPluginManager, PluginManager>();
 host.Services.AddHostedService<ModInterfaceBroker>();
 

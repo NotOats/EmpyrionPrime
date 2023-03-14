@@ -102,9 +102,46 @@ namespace EmpyrionPrime.RemoteClient.Epm
             {
                 EnsureConnected();
 
-                var gameEvent = ProcessRead(token);
-                
-                if(gameEvent != null && gameEvent.HasValue)
+                GameEvent? gameEvent = null;
+
+                try
+                {
+                    var commandId = (CommandId)_tcpReader.ReadInt32();
+                    var clientId = _tcpReader.ReadInt32();
+                    var sequenceNumber = _tcpReader.ReadUInt16();
+
+                    var payloadLength = _tcpReader.ReadInt32();
+                    if (payloadLength == 0)
+                        gameEvent = new GameEvent(clientId, commandId, sequenceNumber, null);
+
+                    var buffer = new byte[payloadLength];
+                    var read = 0;
+
+                    do
+                    {
+                        read += _tcpReader.Read(buffer, read, payloadLength - read);
+                    } while (read < payloadLength && !token.IsCancellationRequested);
+
+                    var payload = CommandSerializer.Deserialize(commandId, buffer);
+                    gameEvent = new GameEvent(clientId, commandId, sequenceNumber, payload);
+                }
+                catch (IOException ex)
+                {
+                    _logger.LogWarning(ex, "Connection closed while reading");
+                    CloseConnection();
+                }
+                catch (ObjectDisposedException ex)
+                {
+                    _logger.LogWarning(ex, "Connection disposed while writing");
+                    CloseConnection();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Error when writing to connection");
+                    CloseConnection();
+                }
+
+                if (gameEvent != null && gameEvent.HasValue)
                     GameEventHandler?.Invoke(gameEvent.Value);
             }
         }
@@ -124,7 +161,39 @@ namespace EmpyrionPrime.RemoteClient.Epm
                 catch (OperationCanceledException) { }
 
                 EnsureConnected();
-                ProcessWriteQueue(token);
+
+                try
+                {
+                    while (_writeQueue.TryDequeue(out GameEvent gameEvent) && !token.IsCancellationRequested)
+                    {
+                        var payload = CommandSerializer.Serialize(gameEvent.Id, gameEvent.Payload);
+
+                        _tcpWriter.Write((int)gameEvent.Id);
+                        _tcpWriter.Write(gameEvent.ClientId);
+                        _tcpWriter.Write(gameEvent.SequenceNumber);
+
+                        _tcpWriter.Write(payload?.Length ?? 0);
+                        if (payload != null)
+                            _tcpWriter.Write(payload);
+
+                        _tcpWriter.Flush();
+                    }
+                }
+                catch (IOException ex)
+                {
+                    _logger.LogWarning(ex, "Connection closed while writing");
+                    CloseConnection();
+                }
+                catch (ObjectDisposedException ex)
+                {
+                    _logger.LogWarning(ex, "Connection disposed while writing");
+                    CloseConnection();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Error when writing to connection");
+                    CloseConnection();
+                }
 
                 _writeNotifier.Reset();
             }
@@ -148,84 +217,6 @@ namespace EmpyrionPrime.RemoteClient.Epm
                 _logger.LogInformation("Connected and created stream reader/writer");
 
                 OnConnected?.Invoke();
-            }
-        }
-
-        private GameEvent? ProcessRead(CancellationToken cancellationToken)
-        {
-            try
-            {
-                var commandId = (CommandId)_tcpReader.ReadInt32();
-                var clientId = _tcpReader.ReadInt32();
-                var sequenceNumber = _tcpReader.ReadUInt16();
-
-                var payloadLength = _tcpReader.ReadInt32();
-                if (payloadLength == 0)
-                    return new GameEvent(clientId, commandId, sequenceNumber, null);
-
-                var buffer = new byte[payloadLength];
-                var read = 0;
-
-                do
-                {
-                    read += _tcpReader.Read(buffer, read, payloadLength - read);
-                } while (read < payloadLength && !cancellationToken.IsCancellationRequested);
-
-                var payload = CommandSerializer.Deserialize(commandId, buffer);
-                return new GameEvent(clientId, commandId, sequenceNumber, payload);
-            }
-            catch (IOException ex)
-            {
-                _logger.LogWarning(ex, "Connection closed while reading");
-                CloseConnection();
-            }
-            catch (ObjectDisposedException ex)
-            {
-                _logger.LogWarning(ex, "Connection disposed while writing");
-                CloseConnection();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Error when writing to connection");
-                CloseConnection();
-            }
-
-            return null;
-        }
-
-        private void ProcessWriteQueue(CancellationToken cancellationToken)
-        {
-            try
-            {
-                while(_writeQueue.TryDequeue(out GameEvent gameEvent) && !cancellationToken.IsCancellationRequested)
-                {
-                    var payload = CommandSerializer.Serialize(gameEvent.Id, gameEvent.Payload);
-
-                    _tcpWriter.Write((int)gameEvent.Id);
-                    _tcpWriter.Write(gameEvent.ClientId);
-                    _tcpWriter.Write(gameEvent.SequenceNumber);
-
-                    _tcpWriter.Write(payload?.Length ?? 0);
-                    if(payload != null)
-                        _tcpWriter.Write(payload);
-
-                    _tcpWriter.Flush();
-                }
-            }
-            catch (IOException ex)
-            {
-                _logger.LogWarning(ex, "Connection closed while writing");
-                CloseConnection();
-            }
-            catch (ObjectDisposedException ex)
-            {
-                _logger.LogWarning(ex, "Connection disposed while writing");
-                CloseConnection();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Error when writing to connection");
-                CloseConnection();
             }
         }
 
