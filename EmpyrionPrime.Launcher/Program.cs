@@ -1,5 +1,7 @@
 ﻿using EmpyrionPrime.Launcher;
+using EmpyrionPrime.Launcher.Empyrion;
 using EmpyrionPrime.Launcher.Plugins;
+using EmpyrionPrime.Plugin;
 using EmpyrionPrime.RemoteClient;
 using EmpyrionPrime.RemoteClient.Epm;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +30,7 @@ host.Services.Configure<PluginsSettings>(host.Configuration.GetSection("Plugins"
 // Services
 host.Services.Configure<ConsoleLifetimeOptions>(opts => opts.SuppressStatusMessages = true);
 host.Services.AddRemoteEmpyrion();
+host.Services.AddSingleton<IEmpyrionGameApiFactory, EmpyrionGameApiFactory>();
 host.Services.AddSingleton<IPluginManager, PluginManager>();
 host.Services.AddHostedService<ModInterfaceBroker>();
 

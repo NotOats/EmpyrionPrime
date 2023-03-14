@@ -13,11 +13,17 @@ public class EntryPoint : IEmpyrionPlugin
     public ModInterface ModInterface { get; }
 
     // Dependency Injection can be used in IEmpyrionPlugin constructors.
-    public EntryPoint(ILogger<EntryPoint> logger)
+    public EntryPoint(ILogger<EntryPoint> logger, IEmpyrionGameApiFactory gameApiFactory)
     {
+        // ILogger can be used for more indepth logging than ModGameAPI.Console_Write
         logger.LogInformation("Basic Plugin loaded");
 
-        // Injected classes can be passed to your ModInterface
-        ModInterface = new ExampleModInterface(logger);
+        // Access IEmpyrionGameApi for future custom methods
+        var gameApi = gameApiFactory.CreateGameApi<EntryPoint>();
+
+        // This can also be used to access ModGameAPI before the ModInterface is loaded
+        gameApi.ModGameAPI.Console_Write("Loaded ModGameApi before ModInterface");
+
+        ModInterface = new ExampleModInterface();
     }
 }

@@ -6,6 +6,14 @@ using Microsoft.Extensions.Options;
 
 namespace EmpyrionPrime.Launcher.Plugins;
 
+internal interface IPluginManager : IDisposable
+{
+    IEnumerable<IPluginHost> Hosts { get; }
+
+    void ExecuteOnEachHost(Action<IPluginHost> action);
+    void ExecuteOnEachPlugin(Action<IEmpyrionPlugin> action);
+}
+
 internal class PluginManager : IPluginManager
 {
     private readonly ILogger<PluginManager> _logger;

@@ -4,6 +4,13 @@ using Microsoft.Extensions.Logging;
 
 namespace EmpyrionPrime.Launcher.Plugins;
 
+internal interface IPluginHost : IDisposable
+{
+    public string AssemblyName { get; }
+    public IReadOnlyCollection<WeakReference<IEmpyrionPlugin>> Plugins { get; }
+
+}
+
 internal class PluginHost : IPluginHost
 {
     private readonly string _assemblyPath;

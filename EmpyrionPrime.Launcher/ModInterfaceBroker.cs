@@ -1,6 +1,6 @@
 ﻿using Eleon.Modding;
-using EmpyrionPrime.Launcher.Empyrion;
 using EmpyrionPrime.Launcher.Plugins;
+using EmpyrionPrime.Plugin;
 using EmpyrionPrime.RemoteClient;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -10,32 +10,32 @@ namespace EmpyrionPrime.Launcher;
 
 internal class ModInterfaceBroker : BackgroundService
 {
-    private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger<ModInterfaceBroker> _logger;
     private readonly IPluginManager _pluginManager;
     private readonly IRemoteEmpyrion _remoteEmpyrion;
+    private readonly IEmpyrionGameApiFactory _empyrionGameApiFactory;
 
     private readonly int _targetUpdateTps;
 
     private bool _disposed = false;
 
     public ModInterfaceBroker(
-        ILoggerFactory logger,
+        ILogger<ModInterfaceBroker> logger,
         IOptions<PluginsSettings> settings,
         IPluginManager pluginManager, 
-        IRemoteEmpyrion remoteEmpyrion)
+        IRemoteEmpyrion remoteEmpyrion,
+        IEmpyrionGameApiFactory empyrionGameApiFactory)
     {
-        _loggerFactory = logger;
-        _logger = logger.CreateLogger<ModInterfaceBroker>();
+        _logger = logger;
         _pluginManager = pluginManager;
         _remoteEmpyrion = remoteEmpyrion;
+        _empyrionGameApiFactory = empyrionGameApiFactory;
         _targetUpdateTps = settings.Value.GameUpdateTps;
 
         // Start each plugin
         _pluginManager.ExecuteOnEachPlugin(plugin =>
         {
-            var pluginLogger = _loggerFactory.CreateLogger(plugin.GetType());
-            var gameApi = new EmpyrionGameApi(pluginLogger, _remoteEmpyrion);
+            var gameApi = _empyrionGameApiFactory.CreateGameApi(plugin.GetType());
 
             plugin.ModInterface.Game_Start(gameApi.ModGameAPI);
         });
