@@ -37,7 +37,7 @@ internal class ModInterfaceBroker : BackgroundService
         {
             var gameApi = _empyrionGameApiFactory.CreateGameApi(plugin.GetType());
 
-            plugin.ModInterface.Game_Start(gameApi.ModGameAPI);
+            plugin.ModInterface?.Game_Start(gameApi.ModGameAPI);
         });
 
         _remoteEmpyrion.GameEventHandler += PropagateGameEvent;
@@ -55,7 +55,7 @@ internal class ModInterfaceBroker : BackgroundService
         _remoteEmpyrion.GameEventHandler -= PropagateGameEvent;
         _pluginManager.ExecuteOnEachPlugin(plugin =>
         {
-            plugin.ModInterface.Game_Exit();
+            plugin.ModInterface?.Game_Exit();
         });
 
         _disposed = true;
@@ -79,7 +79,7 @@ internal class ModInterfaceBroker : BackgroundService
             if (delta < updateLoopDelay)
                 await Task.Delay(updateLoopDelay - delta, stoppingToken);
 
-            _pluginManager.ExecuteOnEachPlugin(plugin => plugin.ModInterface.Game_Update());
+            _pluginManager.ExecuteOnEachPlugin(plugin => plugin.ModInterface?.Game_Update());
         }
     }
 
@@ -89,7 +89,7 @@ internal class ModInterfaceBroker : BackgroundService
         {
             var eleonEvent = (CmdId)gameEvent.Id;
 
-            plugin.ModInterface.Game_Event(eleonEvent, gameEvent.SequenceNumber, gameEvent.Payload);
+            plugin.ModInterface?.Game_Event(eleonEvent, gameEvent.SequenceNumber, gameEvent.Payload);
         });
 
     }

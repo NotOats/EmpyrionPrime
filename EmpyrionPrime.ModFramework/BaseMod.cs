@@ -9,10 +9,15 @@ namespace EmpyrionPrime.ModFramework
         private readonly ILoggerFactory _loggerFactory;
 
         // Raw game events/data
-        protected event Action GameExiting;
-        protected event Action GameStarting;
-        protected event Action GameUpdate;
-        protected event Action<CmdId, ushort, object> GameEvent;
+        protected delegate void GameExitingHandler();
+        protected delegate void GameStartingHandler();
+        protected delegate void GameUpdateHandler();
+        protected delegate void GameEventHandler(CmdId eventId, ushort sequenceNumber, object data);
+
+        protected event GameExitingHandler GameExiting;
+        protected event GameStartingHandler GameStarting;
+        protected event GameUpdateHandler GameUpdate;
+        protected event GameEventHandler GameEvent;
 
         protected ModGameAPI ModGameAPI { get; private set; }
 
