@@ -1,6 +1,7 @@
 ﻿using EmpyrionPrime.Launcher;
 using EmpyrionPrime.Launcher.Empyrion;
 using EmpyrionPrime.Launcher.Plugins;
+using EmpyrionPrime.ModFramework.Api;
 using EmpyrionPrime.Plugin;
 using EmpyrionPrime.RemoteClient;
 using EmpyrionPrime.RemoteClient.Epm;
@@ -28,9 +29,17 @@ host.Services.Configure<EmpyrionSettings>(host.Configuration.GetSection("Empyrio
 host.Services.Configure<PluginsSettings>(host.Configuration.GetSection("Plugins"));
 
 // Services
+// Suppress LifeCycle messages
 host.Services.Configure<ConsoleLifetimeOptions>(opts => opts.SuppressStatusMessages = true);
+
+// Add Empyrion Services
 host.Services.AddRemoteEmpyrion();
-host.Services.AddSingleton<IEmpyrionGameApiFactory, EmpyrionGameApiFactory>();
+host.Services.AddSingleton(typeof(IEmpyrionGameApi<>), typeof(RemoteEmpyrionGameApi<>));
+host.Services.AddSingleton(typeof(IRequestBroker<>), typeof(RequestBroker<>));
+host.Services.AddSingleton(typeof(IApiRequests<>), typeof(ApiRequests<>));
+host.Services.AddSingleton(typeof(IApiEvents<>), typeof(ApiEvents<>));
+
+// Add Plugin Services
 host.Services.AddSingleton<IPluginManager, PluginManager>();
 host.Services.AddHostedService<ModInterfaceBroker>();
 

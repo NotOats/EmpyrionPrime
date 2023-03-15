@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace EmpyrionPrime.ModFramework
 {
+    public delegate Task AsyncGameEventHandler();
+    public delegate Task AsyncGameEventHandler<TEventArgs>(TEventArgs e);
+
     public partial class ApiEvents
     {
         private readonly IDictionary<CmdId, Delegate> _eventHandlers = new Dictionary<CmdId, Delegate>();
@@ -13,15 +16,12 @@ namespace EmpyrionPrime.ModFramework
 
         private readonly ILogger<ApiEvents> _logger;
 
-        public delegate Task AsyncGameEventHandler();
-        public delegate Task AsyncGameEventHandler<TEventArgs>(TEventArgs e);
-
-        internal ApiEvents(ILogger<ApiEvents> logger)
+        internal protected ApiEvents(ILogger<ApiEvents> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void HandleGameEvent(CmdId commandId, ushort sequenceNumber, object data)
+        internal protected void HandleGameEvent(CmdId commandId, ushort sequenceNumber, object data)
         {
             Delegate handler = null;
 

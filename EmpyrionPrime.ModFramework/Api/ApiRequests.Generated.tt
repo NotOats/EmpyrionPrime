@@ -25,12 +25,12 @@ foreach(var item in EmpyrionApiSchema.ApiRequests)
     var argumentType = item.ArgumentType != null ? item.ArgumentType.Name : null;
     var argumentSignature = argumentType != null ? $"{argumentType} arg" : "";
 #>
-        // 
-        //  Command:  CmdId.<#= item.CommandId #>
-        //  Argument: <#= item.ArgumentType != null ? item.ArgumentType : "null" #>
-        //  Response: <#= item.ResponseType != null ? item.ResponseType : "null" #>
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#<#= item.CommandId #>
-        //
+        /// <summary>
+        /// Command:  CmdId.<#= item.CommandId #>
+        /// Argument: <#= item.ArgumentType != null ? item.ArgumentType : "null" #>
+        /// Response: <#= item.ResponseType != null ? item.ResponseType : "null" #>
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#<#= item.CommandId #>
+        /// </summary>
         public <#= methodReturn #> <#= methodName #>(<#= argumentSignature #>)
         {
             return <#= methodName #>(<#= argumentType != null ? "arg, " : "" #>DefaultTimeout);
@@ -69,9 +69,3 @@ else
 
     }
 }
-
-<#+   
-
-
-
-#>

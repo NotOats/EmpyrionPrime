@@ -9,6 +9,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EmpyrionPrime.Plugin\EmpyrionPrime.Plugin.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Mif">
       <HintPath>..\dependencies\Mif.dll</HintPath>
     </Reference>
@@ -18,13 +22,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="ApiEvents.Generated.tt">
+    <None Update="Api\ApiEvents.Generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ApiEvents.Generated.cs</LastGenOutput>
     </None>
-    <None Update="ApiRequests.Generated.tt">
+    <None Update="Api\ApiRequests.Generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ApiRequests.Generated.cs</LastGenOutput>
+    </None>
+    <None Update="Api\IApiEvents.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IApiEvents.Generated.cs</LastGenOutput>
+    </None>
+    <None Update="Api\IApiRequests.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IApiRequests.Generated.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
@@ -33,15 +45,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="ApiEvents.Generated.cs">
+    <Compile Update="Api\ApiEvents.Generated.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ApiEvents.Generated.tt</DependentUpon>
     </Compile>
-    <Compile Update="ApiRequests.Generated.cs">
+    <Compile Update="Api\ApiRequests.Generated.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ApiRequests.Generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Api\IApiEvents.Generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IApiEvents.Generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Api\IApiRequests.Generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IApiRequests.Generated.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 

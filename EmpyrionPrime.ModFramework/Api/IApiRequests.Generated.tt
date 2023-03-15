@@ -1,0 +1,43 @@
+<#@ template debug="true" hostspecific="false" language="C#" #>
+<#@ assembly name="netstandard" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="$(SolutionDir)\dependencies\Mif.dll" #>
+<#@ assembly name="$(SolutionDir)\EmpyrionPrime.ModFramework\bin\Debug\netstandard2.0\EmpyrionPrime.ModFramework.dll" #>
+<#@ import namespace="Eleon.Modding" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="EmpyrionPrime.ModFramework" #>
+<#@ output extension=".cs" #>
+using Eleon.Modding;
+using System;
+using System.Threading.Tasks;
+
+namespace EmpyrionPrime.ModFramework
+{
+    public interface IApiRequests
+    {
+<# 
+foreach(var item in EmpyrionApiSchema.ApiRequests)
+{ 
+    var methodReturn = item.ResponseType != null ? $"Task<{item.ResponseType.Name}>" : "Task";
+    var methodName = item.CommandId.ToString().Replace("Request_", "").Replace("_","");
+
+    var argumentType = item.ArgumentType != null ? item.ArgumentType.Name : null;
+    var argumentSignature = argumentType != null ? $"{argumentType} arg" : "";
+#>
+        /// <summary>
+        /// Command:  CmdId.<#= item.CommandId #>
+        /// Argument: <#= item.ArgumentType != null ? item.ArgumentType : "null" #>
+        /// Response: <#= item.ResponseType != null ? item.ResponseType : "null" #>
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#<#= item.CommandId #>
+        /// </summary>
+        <#= methodReturn #> <#= methodName #>(<#= argumentSignature #>);
+
+        <#= methodReturn #> <#= methodName #>(<#= argumentSignature.Length != 0 ? argumentSignature + ", " : argumentSignature #>TimeSpan timeout);
+
+
+<# 
+} 
+#>
+
+    }
+}

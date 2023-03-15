@@ -8,11 +8,10 @@
 <#@ import namespace="EmpyrionPrime.ModFramework" #>
 <#@ output extension=".cs" #>
 using Eleon.Modding;
-using System;
 
 namespace EmpyrionPrime.ModFramework
 {
-    public partial class ApiEvents
+    public interface IApiEvents
     {
 <#
 foreach(var kvp in EmpyrionApiSchema.ApiEvents)
@@ -21,16 +20,12 @@ foreach(var kvp in EmpyrionApiSchema.ApiEvents)
     var eventName = kvp.Key.ToString().Replace("Event_", "").Replace("_","");
     var dataType = kvp.Value;
 #>
-        // 
-        //  Command:  <#= commandIdString #>
-        //  DataType: <#= dataType != null ? $"{dataType}" : "null" #>
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#<#= kvp.Key #>
-        //
-        public event AsyncGameEventHandler<#= dataType != null ? $"<{dataType.Name}>" : "" #> <#= eventName #>
-        {
-            add { AddHandler(<#= commandIdString #>, value); }
-            remove { RemoveHandler(<#= commandIdString #>, value); }
-        }
+        /// <summary>
+        /// Command:  <#= commandIdString #>
+        /// DataType: <#= dataType != null ? $"{dataType}" : "null" #>
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#<#= kvp.Key #>
+        /// </summary>
+        event AsyncGameEventHandler<#= dataType != null ? $"<{dataType.Name}>" : "" #> <#= eventName #>;
 
 <#
 }

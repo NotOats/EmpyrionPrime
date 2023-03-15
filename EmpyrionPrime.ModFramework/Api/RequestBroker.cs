@@ -4,9 +4,9 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
-namespace EmpyrionPrime.ModFramework
+namespace EmpyrionPrime.ModFramework.Api
 {
-    public class RequestBroker
+    public class RequestBroker : IRequestBroker
     {
         private readonly ILogger _logger;
         private readonly ModGameAPI _gameApi;
@@ -17,7 +17,7 @@ namespace EmpyrionPrime.ModFramework
         private readonly static int _sequenceStartNumber = 4096;
         private static int _nextSequenceNumber = new Random().Next(_sequenceStartNumber, ushort.MaxValue);
 
-        internal RequestBroker(ILogger<RequestBroker> logger, ModGameAPI gameApi)
+        internal protected RequestBroker(ILogger<RequestBroker> logger, ModGameAPI gameApi)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _gameApi = gameApi ?? throw new ArgumentNullException(nameof(gameApi));

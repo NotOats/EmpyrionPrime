@@ -17,7 +17,7 @@ public class BasicModInterface : IEmpyrionPlugin
         ModInterface = new ExampleModInterface(loggerFactory);
     }
 
-    private class ExampleModInterface : BaseMod
+    private class ExampleModInterface : ModInterfaceBase
     {
         public ExampleModInterface(ILoggerFactory loggerFactory) : base(loggerFactory)
         {

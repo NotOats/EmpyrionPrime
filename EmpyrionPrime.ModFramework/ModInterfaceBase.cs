@@ -1,10 +1,11 @@
 ﻿using Eleon.Modding;
+using EmpyrionPrime.ModFramework.Api;
 using Microsoft.Extensions.Logging;
 using System;
 
 namespace EmpyrionPrime.ModFramework
 {
-    public abstract class BaseMod : ModInterface
+    public abstract class ModInterfaceBase : ModInterface
     {
         private readonly ILoggerFactory _loggerFactory;
 
@@ -28,7 +29,7 @@ namespace EmpyrionPrime.ModFramework
         protected ApiRequests ApiRequests { get; private set; }
 
 
-        protected BaseMod(ILoggerFactory loggerFactory)
+        protected ModInterfaceBase(ILoggerFactory loggerFactory)
         {
             _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
             Logger = _loggerFactory.CreateLogger(GetType());
@@ -37,9 +38,6 @@ namespace EmpyrionPrime.ModFramework
         #region ModInterface
         public void Game_Event(CmdId eventId, ushort seqNr, object data)
         {
-            ApiEvents?.HandleGameEvent(eventId, seqNr, data);
-            RequestBroker?.HandleGameEvent(eventId, seqNr, data);
-
             GameEvent?.Invoke(eventId, seqNr, data);
         }
 
@@ -52,14 +50,15 @@ namespace EmpyrionPrime.ModFramework
         {
             ModGameAPI = dediAPI;
 
-            var brokerLogger = _loggerFactory.CreateLogger<RequestBroker>();
-            RequestBroker = new RequestBroker(brokerLogger, ModGameAPI);
+            RequestBroker = new RequestBroker(_loggerFactory.CreateLogger<RequestBroker>(), ModGameAPI);
+            ApiEvents = new ApiEvents(_loggerFactory.CreateLogger<ApiEvents>());
+            ApiRequests = new ApiRequests(_loggerFactory.CreateLogger<ApiRequests>(), RequestBroker);
 
-            var eventsLogger = _loggerFactory.CreateLogger<ApiEvents>();
-            ApiEvents = new ApiEvents(eventsLogger);
-
-            var requestsLogger = _loggerFactory.CreateLogger<ApiRequests>();
-            ApiRequests = new ApiRequests(requestsLogger, RequestBroker);
+            GameEvent += (eventId, seqNr, data) =>
+            {
+                RequestBroker?.HandleGameEvent(eventId, seqNr, data);
+                ApiEvents?.HandleGameEvent(eventId, seqNr, data);
+            };
 
             GameStarting?.Invoke();
         }

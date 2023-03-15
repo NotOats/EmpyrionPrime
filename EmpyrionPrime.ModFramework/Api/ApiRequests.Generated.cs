@@ -7,12 +7,12 @@ namespace EmpyrionPrime.ModFramework
 {
     public partial class ApiRequests
     {
-        // 
-        //  Command:  CmdId.Request_Playfield_List
-        //  Argument: null
-        //  Response: Eleon.Modding.PlayfieldList
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Playfield_List
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Playfield_List
+        /// Argument: null
+        /// Response: Eleon.Modding.PlayfieldList
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Playfield_List
+        /// </summary>
         public Task<PlayfieldList> PlayfieldList()
         {
             return PlayfieldList(DefaultTimeout);
@@ -31,12 +31,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Playfield_Stats
-        //  Argument: Eleon.Modding.PString
-        //  Response: Eleon.Modding.PlayfieldStats
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Playfield_Stats
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Playfield_Stats
+        /// Argument: Eleon.Modding.PString
+        /// Response: Eleon.Modding.PlayfieldStats
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Playfield_Stats
+        /// </summary>
         public Task<PlayfieldStats> PlayfieldStats(PString arg)
         {
             return PlayfieldStats(arg, DefaultTimeout);
@@ -55,12 +55,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Dedi_Stats
-        //  Argument: null
-        //  Response: Eleon.Modding.DediStats
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Dedi_Stats
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Dedi_Stats
+        /// Argument: null
+        /// Response: Eleon.Modding.DediStats
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Dedi_Stats
+        /// </summary>
         public Task<DediStats> DediStats()
         {
             return DediStats(DefaultTimeout);
@@ -79,12 +79,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_GlobalStructure_List
-        //  Argument: null
-        //  Response: Eleon.Modding.GlobalStructureList
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_GlobalStructure_List
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_GlobalStructure_List
+        /// Argument: null
+        /// Response: Eleon.Modding.GlobalStructureList
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_GlobalStructure_List
+        /// </summary>
         public Task<GlobalStructureList> GlobalStructureList()
         {
             return GlobalStructureList(DefaultTimeout);
@@ -103,12 +103,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_GlobalStructure_Update
-        //  Argument: Eleon.Modding.PString
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_GlobalStructure_Update
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_GlobalStructure_Update
+        /// Argument: Eleon.Modding.PString
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_GlobalStructure_Update
+        /// </summary>
         public Task GlobalStructureUpdate(PString arg)
         {
             return GlobalStructureUpdate(arg, DefaultTimeout);
@@ -120,12 +120,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_Structure_Touch
-        //  Argument: Eleon.Modding.Id
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Structure_Touch
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Structure_Touch
+        /// Argument: Eleon.Modding.Id
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Structure_Touch
+        /// </summary>
         public Task StructureTouch(Id arg)
         {
             return StructureTouch(arg, DefaultTimeout);
@@ -137,12 +137,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_Structure_BlockStatistics
-        //  Argument: Eleon.Modding.Id
-        //  Response: Eleon.Modding.IdStructureBlockInfo
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Structure_BlockStatistics
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Structure_BlockStatistics
+        /// Argument: Eleon.Modding.Id
+        /// Response: Eleon.Modding.IdStructureBlockInfo
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Structure_BlockStatistics
+        /// </summary>
         public Task<IdStructureBlockInfo> StructureBlockStatistics(Id arg)
         {
             return StructureBlockStatistics(arg, DefaultTimeout);
@@ -161,12 +161,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Player_Info
-        //  Argument: Eleon.Modding.Id
-        //  Response: Eleon.Modding.PlayerInfo
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_Info
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Player_Info
+        /// Argument: Eleon.Modding.Id
+        /// Response: Eleon.Modding.PlayerInfo
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_Info
+        /// </summary>
         public Task<PlayerInfo> PlayerInfo(Id arg)
         {
             return PlayerInfo(arg, DefaultTimeout);
@@ -185,12 +185,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Player_List
-        //  Argument: null
-        //  Response: Eleon.Modding.IdList
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_List
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Player_List
+        /// Argument: null
+        /// Response: Eleon.Modding.IdList
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_List
+        /// </summary>
         public Task<IdList> PlayerList()
         {
             return PlayerList(DefaultTimeout);
@@ -209,12 +209,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Player_GetInventory
-        //  Argument: Eleon.Modding.Id
-        //  Response: Eleon.Modding.Inventory
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_GetInventory
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Player_GetInventory
+        /// Argument: Eleon.Modding.Id
+        /// Response: Eleon.Modding.Inventory
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_GetInventory
+        /// </summary>
         public Task<Inventory> PlayerGetInventory(Id arg)
         {
             return PlayerGetInventory(arg, DefaultTimeout);
@@ -233,12 +233,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Player_SetInventory
-        //  Argument: Eleon.Modding.Inventory
-        //  Response: Eleon.Modding.Inventory
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_SetInventory
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Player_SetInventory
+        /// Argument: Eleon.Modding.Inventory
+        /// Response: Eleon.Modding.Inventory
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_SetInventory
+        /// </summary>
         public Task<Inventory> PlayerSetInventory(Inventory arg)
         {
             return PlayerSetInventory(arg, DefaultTimeout);
@@ -257,12 +257,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Player_AddItem
-        //  Argument: Eleon.Modding.IdItemStack
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_AddItem
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Player_AddItem
+        /// Argument: Eleon.Modding.IdItemStack
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_AddItem
+        /// </summary>
         public Task PlayerAddItem(IdItemStack arg)
         {
             return PlayerAddItem(arg, DefaultTimeout);
@@ -274,12 +274,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_Player_Credits
-        //  Argument: Eleon.Modding.Id
-        //  Response: Eleon.Modding.IdCredits
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_Credits
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Player_Credits
+        /// Argument: Eleon.Modding.Id
+        /// Response: Eleon.Modding.IdCredits
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_Credits
+        /// </summary>
         public Task<IdCredits> PlayerCredits(Id arg)
         {
             return PlayerCredits(arg, DefaultTimeout);
@@ -298,12 +298,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Player_SetCredits
-        //  Argument: Eleon.Modding.IdCredits
-        //  Response: Eleon.Modding.IdCredits
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_SetCredits
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Player_SetCredits
+        /// Argument: Eleon.Modding.IdCredits
+        /// Response: Eleon.Modding.IdCredits
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_SetCredits
+        /// </summary>
         public Task<IdCredits> PlayerSetCredits(IdCredits arg)
         {
             return PlayerSetCredits(arg, DefaultTimeout);
@@ -322,12 +322,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Player_AddCredits
-        //  Argument: Eleon.Modding.IdCredits
-        //  Response: Eleon.Modding.IdCredits
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_AddCredits
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Player_AddCredits
+        /// Argument: Eleon.Modding.IdCredits
+        /// Response: Eleon.Modding.IdCredits
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_AddCredits
+        /// </summary>
         public Task<IdCredits> PlayerAddCredits(IdCredits arg)
         {
             return PlayerAddCredits(arg, DefaultTimeout);
@@ -346,12 +346,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Blueprint_Finish
-        //  Argument: Eleon.Modding.Id
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Blueprint_Finish
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Blueprint_Finish
+        /// Argument: Eleon.Modding.Id
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Blueprint_Finish
+        /// </summary>
         public Task BlueprintFinish(Id arg)
         {
             return BlueprintFinish(arg, DefaultTimeout);
@@ -363,12 +363,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_Blueprint_Resources
-        //  Argument: Eleon.Modding.BlueprintResources
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Blueprint_Resources
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Blueprint_Resources
+        /// Argument: Eleon.Modding.BlueprintResources
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Blueprint_Resources
+        /// </summary>
         public Task BlueprintResources(BlueprintResources arg)
         {
             return BlueprintResources(arg, DefaultTimeout);
@@ -380,12 +380,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_Player_ChangePlayerfield
-        //  Argument: Eleon.Modding.IdPlayfieldPositionRotation
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_ChangePlayerfield
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Player_ChangePlayerfield
+        /// Argument: Eleon.Modding.IdPlayfieldPositionRotation
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_ChangePlayerfield
+        /// </summary>
         public Task PlayerChangePlayerfield(IdPlayfieldPositionRotation arg)
         {
             return PlayerChangePlayerfield(arg, DefaultTimeout);
@@ -397,12 +397,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_Player_ItemExchange
-        //  Argument: Eleon.Modding.ItemExchangeInfo
-        //  Response: Eleon.Modding.ItemExchangeInfo
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_ItemExchange
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Player_ItemExchange
+        /// Argument: Eleon.Modding.ItemExchangeInfo
+        /// Response: Eleon.Modding.ItemExchangeInfo
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_ItemExchange
+        /// </summary>
         public Task<ItemExchangeInfo> PlayerItemExchange(ItemExchangeInfo arg)
         {
             return PlayerItemExchange(arg, DefaultTimeout);
@@ -421,12 +421,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Player_SetPlayerInfo
-        //  Argument: Eleon.Modding.PlayerInfoSet
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_SetPlayerInfo
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Player_SetPlayerInfo
+        /// Argument: Eleon.Modding.PlayerInfoSet
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_SetPlayerInfo
+        /// </summary>
         public Task PlayerSetPlayerInfo(PlayerInfoSet arg)
         {
             return PlayerSetPlayerInfo(arg, DefaultTimeout);
@@ -438,12 +438,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_Entity_Teleport
-        //  Argument: Eleon.Modding.IdPositionRotation
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_Teleport
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Entity_Teleport
+        /// Argument: Eleon.Modding.IdPositionRotation
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_Teleport
+        /// </summary>
         public Task EntityTeleport(IdPositionRotation arg)
         {
             return EntityTeleport(arg, DefaultTimeout);
@@ -455,12 +455,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_Entity_ChangePlayfield
-        //  Argument: Eleon.Modding.IdPlayfieldPositionRotation
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_ChangePlayfield
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Entity_ChangePlayfield
+        /// Argument: Eleon.Modding.IdPlayfieldPositionRotation
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_ChangePlayfield
+        /// </summary>
         public Task EntityChangePlayfield(IdPlayfieldPositionRotation arg)
         {
             return EntityChangePlayfield(arg, DefaultTimeout);
@@ -472,12 +472,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_Entity_Destroy
-        //  Argument: Eleon.Modding.Id
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_Destroy
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Entity_Destroy
+        /// Argument: Eleon.Modding.Id
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_Destroy
+        /// </summary>
         public Task EntityDestroy(Id arg)
         {
             return EntityDestroy(arg, DefaultTimeout);
@@ -489,12 +489,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_Entity_PosAndRot
-        //  Argument: Eleon.Modding.Id
-        //  Response: Eleon.Modding.IdPositionRotation
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_PosAndRot
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Entity_PosAndRot
+        /// Argument: Eleon.Modding.Id
+        /// Response: Eleon.Modding.IdPositionRotation
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_PosAndRot
+        /// </summary>
         public Task<IdPositionRotation> EntityPosAndRot(Id arg)
         {
             return EntityPosAndRot(arg, DefaultTimeout);
@@ -513,12 +513,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Entity_Spawn
-        //  Argument: Eleon.Modding.EntitySpawnInfo
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_Spawn
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Entity_Spawn
+        /// Argument: Eleon.Modding.EntitySpawnInfo
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_Spawn
+        /// </summary>
         public Task EntitySpawn(EntitySpawnInfo arg)
         {
             return EntitySpawn(arg, DefaultTimeout);
@@ -530,12 +530,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_Get_Factions
-        //  Argument: Eleon.Modding.Id
-        //  Response: Eleon.Modding.FactionInfoList
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Get_Factions
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Get_Factions
+        /// Argument: Eleon.Modding.Id
+        /// Response: Eleon.Modding.FactionInfoList
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Get_Factions
+        /// </summary>
         public Task<FactionInfoList> GetFactions(Id arg)
         {
             return GetFactions(arg, DefaultTimeout);
@@ -554,12 +554,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_NewEntityId
-        //  Argument: null
-        //  Response: Eleon.Modding.Id
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_NewEntityId
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_NewEntityId
+        /// Argument: null
+        /// Response: Eleon.Modding.Id
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_NewEntityId
+        /// </summary>
         public Task<Id> NewEntityId()
         {
             return NewEntityId(DefaultTimeout);
@@ -578,12 +578,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_AlliancesAll
-        //  Argument: null
-        //  Response: Eleon.Modding.AlliancesTable
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_AlliancesAll
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_AlliancesAll
+        /// Argument: null
+        /// Response: Eleon.Modding.AlliancesTable
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_AlliancesAll
+        /// </summary>
         public Task<AlliancesTable> AlliancesAll()
         {
             return AlliancesAll(DefaultTimeout);
@@ -602,12 +602,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_AlliancesFaction
-        //  Argument: Eleon.Modding.AlliancesFaction
-        //  Response: Eleon.Modding.AlliancesFaction
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_AlliancesFaction
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_AlliancesFaction
+        /// Argument: Eleon.Modding.AlliancesFaction
+        /// Response: Eleon.Modding.AlliancesFaction
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_AlliancesFaction
+        /// </summary>
         public Task<AlliancesFaction> AlliancesFaction(AlliancesFaction arg)
         {
             return AlliancesFaction(arg, DefaultTimeout);
@@ -626,12 +626,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Load_Playfield
-        //  Argument: Eleon.Modding.PlayfieldLoad
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Load_Playfield
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Load_Playfield
+        /// Argument: Eleon.Modding.PlayfieldLoad
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Load_Playfield
+        /// </summary>
         public Task LoadPlayfield(PlayfieldLoad arg)
         {
             return LoadPlayfield(arg, DefaultTimeout);
@@ -643,12 +643,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_ConsoleCommand
-        //  Argument: Eleon.Modding.PString
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_ConsoleCommand
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_ConsoleCommand
+        /// Argument: Eleon.Modding.PString
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_ConsoleCommand
+        /// </summary>
         public Task ConsoleCommand(PString arg)
         {
             return ConsoleCommand(arg, DefaultTimeout);
@@ -660,12 +660,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_GetBannedPlayers
-        //  Argument: null
-        //  Response: Eleon.Modding.IdList
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_GetBannedPlayers
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_GetBannedPlayers
+        /// Argument: null
+        /// Response: Eleon.Modding.IdList
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_GetBannedPlayers
+        /// </summary>
         public Task<IdList> GetBannedPlayers()
         {
             return GetBannedPlayers(DefaultTimeout);
@@ -684,12 +684,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_InGameMessage_SinglePlayer
-        //  Argument: Eleon.Modding.IdMsgPrio
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_InGameMessage_SinglePlayer
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_InGameMessage_SinglePlayer
+        /// Argument: Eleon.Modding.IdMsgPrio
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_InGameMessage_SinglePlayer
+        /// </summary>
         public Task InGameMessageSinglePlayer(IdMsgPrio arg)
         {
             return InGameMessageSinglePlayer(arg, DefaultTimeout);
@@ -701,12 +701,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_InGameMessage_AllPlayers
-        //  Argument: Eleon.Modding.IdMsgPrio
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_InGameMessage_AllPlayers
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_InGameMessage_AllPlayers
+        /// Argument: Eleon.Modding.IdMsgPrio
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_InGameMessage_AllPlayers
+        /// </summary>
         public Task InGameMessageAllPlayers(IdMsgPrio arg)
         {
             return InGameMessageAllPlayers(arg, DefaultTimeout);
@@ -718,12 +718,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_InGameMessage_Faction
-        //  Argument: Eleon.Modding.IdMsgPrio
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_InGameMessage_Faction
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_InGameMessage_Faction
+        /// Argument: Eleon.Modding.IdMsgPrio
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_InGameMessage_Faction
+        /// </summary>
         public Task InGameMessageFaction(IdMsgPrio arg)
         {
             return InGameMessageFaction(arg, DefaultTimeout);
@@ -735,12 +735,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_ShowDialog_SinglePlayer
-        //  Argument: Eleon.Modding.DialogBoxData
-        //  Response: Eleon.Modding.IdAndIntValue
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_ShowDialog_SinglePlayer
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_ShowDialog_SinglePlayer
+        /// Argument: Eleon.Modding.DialogBoxData
+        /// Response: Eleon.Modding.IdAndIntValue
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_ShowDialog_SinglePlayer
+        /// </summary>
         public Task<IdAndIntValue> ShowDialogSinglePlayer(DialogBoxData arg)
         {
             return ShowDialogSinglePlayer(arg, DefaultTimeout);
@@ -759,12 +759,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Player_GetAndRemoveInventory
-        //  Argument: Eleon.Modding.Id
-        //  Response: Eleon.Modding.Inventory
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_GetAndRemoveInventory
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Player_GetAndRemoveInventory
+        /// Argument: Eleon.Modding.Id
+        /// Response: Eleon.Modding.Inventory
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Player_GetAndRemoveInventory
+        /// </summary>
         public Task<Inventory> PlayerGetAndRemoveInventory(Id arg)
         {
             return PlayerGetAndRemoveInventory(arg, DefaultTimeout);
@@ -783,12 +783,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Playfield_Entity_List
-        //  Argument: Eleon.Modding.PString
-        //  Response: Eleon.Modding.PlayfieldEntityList
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Playfield_Entity_List
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Playfield_Entity_List
+        /// Argument: Eleon.Modding.PString
+        /// Response: Eleon.Modding.PlayfieldEntityList
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Playfield_Entity_List
+        /// </summary>
         public Task<PlayfieldEntityList> PlayfieldEntityList(PString arg)
         {
             return PlayfieldEntityList(arg, DefaultTimeout);
@@ -807,12 +807,12 @@ namespace EmpyrionPrime.ModFramework
             }
         }
 
-        // 
-        //  Command:  CmdId.Request_Entity_Destroy2
-        //  Argument: Eleon.Modding.IdPlayfield
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_Destroy2
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Entity_Destroy2
+        /// Argument: Eleon.Modding.IdPlayfield
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_Destroy2
+        /// </summary>
         public Task EntityDestroy2(IdPlayfield arg)
         {
             return EntityDestroy2(arg, DefaultTimeout);
@@ -824,12 +824,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_Entity_Export
-        //  Argument: Eleon.Modding.EntityExportInfo
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_Export
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Entity_Export
+        /// Argument: Eleon.Modding.EntityExportInfo
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_Export
+        /// </summary>
         public Task EntityExport(EntityExportInfo arg)
         {
             return EntityExport(arg, DefaultTimeout);
@@ -841,12 +841,12 @@ namespace EmpyrionPrime.ModFramework
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
 
-        // 
-        //  Command:  CmdId.Request_Entity_SetName
-        //  Argument: Eleon.Modding.IdPlayfieldName
-        //  Response: null
-        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_SetName
-        //
+        /// <summary>
+        /// Command:  CmdId.Request_Entity_SetName
+        /// Argument: Eleon.Modding.IdPlayfieldName
+        /// Response: null
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#Request_Entity_SetName
+        /// </summary>
         public Task EntitySetName(IdPlayfieldName arg)
         {
             return EntitySetName(arg, DefaultTimeout);
@@ -861,4 +861,3 @@ namespace EmpyrionPrime.ModFramework
 
     }
 }
-

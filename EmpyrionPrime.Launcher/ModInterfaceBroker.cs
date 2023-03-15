@@ -2,6 +2,7 @@
 using EmpyrionPrime.Launcher.Plugins;
 using EmpyrionPrime.Plugin;
 using EmpyrionPrime.RemoteClient;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,7 +14,7 @@ internal class ModInterfaceBroker : BackgroundService
     private readonly ILogger<ModInterfaceBroker> _logger;
     private readonly IPluginManager _pluginManager;
     private readonly IRemoteEmpyrion _remoteEmpyrion;
-    private readonly IEmpyrionGameApiFactory _empyrionGameApiFactory;
+    private readonly IServiceProvider _serviceProvider;
 
     private readonly int _targetUpdateTps;
 
@@ -24,18 +25,20 @@ internal class ModInterfaceBroker : BackgroundService
         IOptions<PluginsSettings> settings,
         IPluginManager pluginManager, 
         IRemoteEmpyrion remoteEmpyrion,
-        IEmpyrionGameApiFactory empyrionGameApiFactory)
+        IServiceProvider serviceProvider)
     {
         _logger = logger;
         _pluginManager = pluginManager;
         _remoteEmpyrion = remoteEmpyrion;
-        _empyrionGameApiFactory = empyrionGameApiFactory;
+        _serviceProvider = serviceProvider;
         _targetUpdateTps = settings.Value.GameUpdateTps;
 
         // Start each plugin
         _pluginManager.ExecuteOnEachPlugin(plugin =>
         {
-            var gameApi = _empyrionGameApiFactory.CreateGameApi(plugin.GetType());
+            var gameApiType = typeof(IEmpyrionGameApi<>).MakeGenericType(plugin.GetType());
+            var gameApi = _serviceProvider.GetRequiredService(gameApiType) as IEmpyrionGameApi
+                ?? throw new Exception($"Failed to load IEmpyrionGameApi<> for {plugin.GetType()}");
 
             plugin.ModInterface?.Game_Start(gameApi.ModGameAPI);
         });

@@ -6,9 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace EmpyrionPrime.Launcher.Empyrion;
 
-internal class RemoteEmpyrionGameApi : IEmpyrionGameApi, IDisposable
+internal class RemoteEmpyrionGameApi<TPlugin> : IEmpyrionGameApi<TPlugin>, IDisposable where TPlugin : IEmpyrionPlugin
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<TPlugin> _logger;
     private readonly IRemoteEmpyrion _remoteEmpyrion;
 
     public event ChatMessageHandler? ChatMessage;
@@ -16,7 +16,7 @@ internal class RemoteEmpyrionGameApi : IEmpyrionGameApi, IDisposable
 
     public ModGameAPI ModGameAPI { get; }
 
-    public RemoteEmpyrionGameApi(ILogger logger, IRemoteEmpyrion remoteEmpyrion)
+    public RemoteEmpyrionGameApi(ILogger<TPlugin> logger, IRemoteEmpyrion remoteEmpyrion)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _remoteEmpyrion = remoteEmpyrion ?? throw new ArgumentNullException(nameof(remoteEmpyrion));

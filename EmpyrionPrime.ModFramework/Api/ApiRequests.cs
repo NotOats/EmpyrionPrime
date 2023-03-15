@@ -1,4 +1,5 @@
 ﻿using Eleon.Modding;
+using EmpyrionPrime.ModFramework.Api;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -10,9 +11,9 @@ namespace EmpyrionPrime.ModFramework
         private readonly static TimeSpan DefaultTimeout = new TimeSpan(0, 0, 0, 10);
 
         private readonly ILogger<ApiRequests> _logger;
-        private readonly RequestBroker _requestBroker;
+        private readonly IRequestBroker _requestBroker;
 
-        internal ApiRequests(ILogger<ApiRequests> logger, RequestBroker requestBroker)
+        internal protected ApiRequests(ILogger<ApiRequests> logger, IRequestBroker requestBroker)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _requestBroker = requestBroker ?? throw new ArgumentNullException(nameof(requestBroker));

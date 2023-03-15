@@ -16,6 +16,7 @@ internal class PluginLoadContext : AssemblyLoadContext
 
         // Plugin Interface
         typeof(Plugin.IEmpyrionPlugin).Assembly,
+        typeof(ModFramework.EmpyrionApiSchema).Assembly
     };
 
     private readonly AssemblyDependencyResolver _resolver;

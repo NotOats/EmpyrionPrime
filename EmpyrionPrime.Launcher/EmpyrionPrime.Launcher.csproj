@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EmpyrionPrime.ModFramework\EmpyrionPrime.ModFramework.csproj" />
     <ProjectReference Include="..\EmpyrionPrime.Plugin\EmpyrionPrime.Plugin.csproj" />
     <ProjectReference Include="..\EmpyrionPrime.RemoteClient\EmpyrionPrime.RemoteClient.csproj" />
   </ItemGroup>
