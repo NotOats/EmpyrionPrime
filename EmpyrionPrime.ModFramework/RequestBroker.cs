@@ -50,6 +50,7 @@ namespace EmpyrionPrime.ModFramework
 
         public void HandleGameEvent(CmdId eventId, ushort sequenceNumber, object data)
         {
+            // TODO: Validate sequence number against expected response. This will require storing the source eventId
             if (!_pendingRequests.TryRemove(sequenceNumber, out TaskCompletionSource<object> tcs))
                 return;
 

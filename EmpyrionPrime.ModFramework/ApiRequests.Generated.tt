@@ -1,0 +1,77 @@
+<#@ template debug="true" hostspecific="false" language="C#" #>
+<#@ assembly name="netstandard" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="$(SolutionDir)\dependencies\Mif.dll" #>
+<#@ assembly name="$(SolutionDir)\EmpyrionPrime.ModFramework\bin\Debug\netstandard2.0\EmpyrionPrime.ModFramework.dll" #>
+<#@ import namespace="Eleon.Modding" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="EmpyrionPrime.ModFramework" #>
+<#@ output extension=".cs" #>
+using Eleon.Modding;
+using EmpyrionPrime.ModFramework.Extensions;
+using System;
+using System.Threading.Tasks;
+
+namespace EmpyrionPrime.ModFramework
+{
+    public partial class ApiRequests
+    {
+<# 
+foreach(var item in EmpyrionApiSchema.ApiRequests)
+{ 
+    var methodReturn = item.ResponseType != null ? $"Task<{item.ResponseType.Name}>" : "Task";
+    var methodName = item.CommandId.ToString().Replace("Request_", "").Replace("_","");
+
+    var argumentType = item.ArgumentType != null ? item.ArgumentType.Name : null;
+    var argumentSignature = argumentType != null ? $"{argumentType} arg" : "";
+#>
+        // 
+        //  Command:  CmdId.<#= item.CommandId #>
+        //  Argument: <#= item.ArgumentType != null ? item.ArgumentType : "null" #>
+        //  Response: <#= item.ResponseType != null ? item.ResponseType : "null" #>
+        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#<#= item.CommandId #>
+        //
+        public <#= methodReturn #> <#= methodName #>(<#= argumentSignature #>)
+        {
+            return <#= methodName #>(<#= argumentType != null ? "arg, " : "" #>DefaultTimeout);
+        }
+
+        public async <#= methodReturn #> <#= methodName #>(<#= argumentSignature.Length != 0 ? argumentSignature + ", " : argumentSignature #>TimeSpan timeout)
+        {
+<#
+if(item.ResponseType != null)
+{
+#>
+#if DEBUG
+            using(new DebugLog(_logger, <#= $"CmdId.{item.CommandId}" #>))
+#endif
+            {
+                var result = await _requestBroker.SendGameRequest(<#= $"CmdId.{item.CommandId}, {(argumentType != null ? "arg" : "null")}" #>)
+                    .TimeoutAfter((int)timeout.TotalMilliseconds);
+
+                return (<#= item.ResponseType.Name #>)result;
+            }
+<#
+}
+else
+{
+#>
+            await _requestBroker.SendGameRequest(<#= $"CmdId.{item.CommandId}, {(argumentType != null ? "arg" : "null")}" #>)
+                .TimeoutAfter((int)timeout.TotalMilliseconds);
+<# 
+} 
+#>
+        }
+
+<# 
+} 
+#>
+
+    }
+}
+
+<#+   
+
+
+
+#>

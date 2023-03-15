@@ -24,6 +24,8 @@ namespace EmpyrionPrime.ModFramework
         // Addons
         protected ILogger Logger { get; }
         protected RequestBroker RequestBroker { get; private set; }
+        protected ApiEvents ApiEvents { get; private set; }
+        protected ApiRequests ApiRequests { get; private set; }
 
 
         protected BaseMod(ILoggerFactory loggerFactory)
@@ -35,6 +37,7 @@ namespace EmpyrionPrime.ModFramework
         #region ModInterface
         public void Game_Event(CmdId eventId, ushort seqNr, object data)
         {
+            ApiEvents?.HandleGameEvent(eventId, seqNr, data);
             RequestBroker?.HandleGameEvent(eventId, seqNr, data);
 
             GameEvent?.Invoke(eventId, seqNr, data);
@@ -51,6 +54,12 @@ namespace EmpyrionPrime.ModFramework
 
             var brokerLogger = _loggerFactory.CreateLogger<RequestBroker>();
             RequestBroker = new RequestBroker(brokerLogger, ModGameAPI);
+
+            var eventsLogger = _loggerFactory.CreateLogger<ApiEvents>();
+            ApiEvents = new ApiEvents(eventsLogger);
+
+            var requestsLogger = _loggerFactory.CreateLogger<ApiRequests>();
+            ApiRequests = new ApiRequests(requestsLogger, RequestBroker);
 
             GameStarting?.Invoke();
         }

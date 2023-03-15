@@ -1,0 +1,39 @@
+<#@ template debug="true" hostspecific="false" language="C#" #>
+<#@ assembly name="netstandard" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="$(SolutionDir)\dependencies\Mif.dll" #>
+<#@ assembly name="$(SolutionDir)\EmpyrionPrime.ModFramework\bin\Debug\netstandard2.0\EmpyrionPrime.ModFramework.dll" #>
+<#@ import namespace="Eleon.Modding" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="EmpyrionPrime.ModFramework" #>
+<#@ output extension=".cs" #>
+using Eleon.Modding;
+using System;
+
+namespace EmpyrionPrime.ModFramework
+{
+    public partial class ApiEvents
+    {
+<#
+foreach(var kvp in EmpyrionApiSchema.ApiEvents)
+{
+    var commandIdString = $"CmdId.{kvp.Key}";
+    var eventName = kvp.Key.ToString().Replace("Event_", "").Replace("_","");
+    var dataType = kvp.Value;
+#>
+        // 
+        //  Command:  <#= commandIdString #>
+        //  DataType: <#= dataType != null ? $"{dataType}" : "null" #>
+        //  Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#<#= kvp.Key #>
+        //
+        public event AsyncGameEventHandler<#= dataType != null ? $"<{dataType.Name}>" : "" #> <#= eventName #>
+        {
+            add { AddHandler(<#= commandIdString #>, value); }
+            remove { RemoveHandler(<#= commandIdString #>, value); }
+        }
+
+<#
+}
+#>
+    }
+}
