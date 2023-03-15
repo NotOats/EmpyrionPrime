@@ -21,9 +21,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExamplePlugins", "ExamplePl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicPlugin", "ExamplePlugins\BasicPlugin\BasicPlugin.csproj", "{E95E66E2-F50E-4B68-9FF7-DC8B261C36D6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseModPlugin", "ExamplePlugins\BaseModPlugin\BaseModPlugin.csproj", "{C5FED5B1-4E12-4B03-89E7-18FBFB40B430}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrameworkPlugins", "ExamplePlugins\FrameworkPlugins\FrameworkPlugins.csproj", "{C5FED5B1-4E12-4B03-89E7-18FBFB40B430}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmpyrionPrime.ModFramework", "EmpyrionPrime.ModFramework\EmpyrionPrime.ModFramework.csproj", "{7084BA93-1AA7-4510-9067-5F9EF5B7A1CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmpyrionPrime.ModFramework", "EmpyrionPrime.ModFramework\EmpyrionPrime.ModFramework.csproj", "{7084BA93-1AA7-4510-9067-5F9EF5B7A1CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -12,6 +12,7 @@ internal class RemoteEmpyrionGameApi : IEmpyrionGameApi, IDisposable
     private readonly IRemoteEmpyrion _remoteEmpyrion;
 
     public event ChatMessageHandler? ChatMessage;
+    public event GameEventHandler? GameEvent;
 
     public ModGameAPI ModGameAPI { get; }
 
@@ -40,6 +41,8 @@ internal class RemoteEmpyrionGameApi : IEmpyrionGameApi, IDisposable
 
     private void HandleGameEvent(GameEvent gameEvent)
     {
+        GameEvent?.Invoke((CmdId)gameEvent.Id, gameEvent.SequenceNumber, gameEvent.Payload);
+
         // Hard coded for EPM which sends eMod_Commands.Event_Chat (201)
         // events on chat message
         if ((int)gameEvent.Id == 201 && gameEvent.Payload is MessageData messageData)
