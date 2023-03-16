@@ -41,7 +41,7 @@ public class BasicPlugin : IEmpyrionPlugin
         public void Game_Start(ModGameAPI dediAPI)
         {
             _modGameApi = dediAPI;
-            _modGameApi?.Console_Write($"Game_Start(dediApi: {dediAPI})");
+            _modGameApi?.Console_Write($"ModGameAPI.Game_GetTickTime(): {dediAPI.Game_GetTickTime()}");
         }
 
         public void Game_Update()

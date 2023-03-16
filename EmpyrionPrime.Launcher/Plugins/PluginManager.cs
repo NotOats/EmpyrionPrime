@@ -1,4 +1,4 @@
-﻿using EmpyrionPrime.Launcher.Collections;
+﻿using EmpyrionPrime.Launcher.Extensions;
 using EmpyrionPrime.Plugin;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -37,14 +37,13 @@ internal class PluginManager : IPluginManager
         _serviceProvider = provider;
 
         // Load plugins
-        var pluginPath = Path.Join(Environment.CurrentDirectory, _settings.Value.Folder);
-        if (!Directory.Exists(pluginPath))
+        if (!Directory.Exists(PluginFolder))
         {
-            _logger.LogWarning("Plugin Path '{PluginPath}' does not exist", pluginPath);
+            _logger.LogWarning("Plugin Path '{PluginPath}' does not exist", PluginFolder);
             return;
         }
 
-        foreach (var path in PluginFinder.FindAssembliesWithPlugins(pluginPath))
+        foreach (var path in PluginFinder.FindAssembliesWithPlugins(PluginFolder))
         {
             var hostLogger = _serviceProvider.GetRequiredService<ILogger<PluginHost>>();
 

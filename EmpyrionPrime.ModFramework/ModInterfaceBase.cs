@@ -1,5 +1,6 @@
 ﻿using Eleon.Modding;
 using EmpyrionPrime.ModFramework.Api;
+using EmpyrionPrime.ModFramework.Extensions;
 using Microsoft.Extensions.Logging;
 using System;
 
@@ -50,9 +51,9 @@ namespace EmpyrionPrime.ModFramework
         {
             ModGameAPI = dediAPI;
 
-            RequestBroker = new RequestBroker(_loggerFactory.CreateLogger<RequestBroker>(), ModGameAPI);
-            ApiEvents = new ApiEvents(_loggerFactory.CreateLogger<ApiEvents>());
-            ApiRequests = new ApiRequests(_loggerFactory.CreateLogger<ApiRequests>(), RequestBroker);
+            RequestBroker = new RequestBroker(_loggerFactory.CreateLogger(GetType(), typeof(RequestBroker)), ModGameAPI);
+            ApiEvents = new ApiEvents(_loggerFactory.CreateLogger(GetType(), typeof(ApiEvents)));
+            ApiRequests = new ApiRequests(_loggerFactory.CreateLogger(GetType(), typeof(ApiRequests)), RequestBroker);
 
             GameEvent += (eventId, seqNr, data) =>
             {

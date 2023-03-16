@@ -6,7 +6,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
 {
     public class EpmClient : IRemoteEmpyrion, IDisposable
     {
-        private readonly ILogger<EpmClient> _logger;
+        private readonly ILogger _logger;
 
         private readonly ThreadedTcpClient _tcpClient;
 
@@ -17,7 +17,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
 
         public int ClientId { get; }
 
-        public EpmClient(ILogger<EpmClient> logger, string address = "127.0.0.1", int port = 12345, int clientId = -1)
+        public EpmClient(ILogger logger, string address = "127.0.0.1", int port = 12345, int clientId = -1)
         {
             _logger = logger;
             ClientId = clientId == -1 ? Process.GetCurrentProcess().Id : clientId;

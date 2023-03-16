@@ -1,5 +1,7 @@
 ﻿using Eleon;
 using Eleon.Modding;
+using EmpyrionPrime.Launcher.Plugins;
+using EmpyrionPrime.ModFramework.Extensions;
 using EmpyrionPrime.Plugin;
 using EmpyrionPrime.RemoteClient;
 using Microsoft.Extensions.Logging;
@@ -8,7 +10,7 @@ namespace EmpyrionPrime.Launcher.Empyrion;
 
 internal class RemoteEmpyrionGameApi<TPlugin> : IEmpyrionGameApi<TPlugin>, IDisposable where TPlugin : IEmpyrionPlugin
 {
-    private readonly ILogger<TPlugin> _logger;
+    private readonly ILogger _logger;
     private readonly IRemoteEmpyrion _remoteEmpyrion;
 
     public event ChatMessageHandler? ChatMessage;
@@ -16,9 +18,14 @@ internal class RemoteEmpyrionGameApi<TPlugin> : IEmpyrionGameApi<TPlugin>, IDisp
 
     public ModGameAPI ModGameAPI { get; }
 
-    public RemoteEmpyrionGameApi(ILogger<TPlugin> logger, IRemoteEmpyrion remoteEmpyrion)
+    public RemoteEmpyrionGameApi(ILoggerFactory loggerFactory, IRemoteEmpyrion remoteEmpyrion)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        // Override for clean logging with ModInterfaceWrapper
+        var pluginType = typeof(TPlugin);
+        if (pluginType.GetGenericTypeDefinition() == typeof(ModInterfaceWrapper<>))
+            pluginType = pluginType.GetGenericArguments()[0];
+
+        _logger = loggerFactory?.CreateLogger(pluginType.Name, "Main") ?? throw new ArgumentNullException(nameof(loggerFactory));
         _remoteEmpyrion = remoteEmpyrion ?? throw new ArgumentNullException(nameof(remoteEmpyrion));
 
         ModGameAPI = new RemoteModGameApi(_logger, _remoteEmpyrion);

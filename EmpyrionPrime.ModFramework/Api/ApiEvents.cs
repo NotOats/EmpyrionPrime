@@ -14,9 +14,9 @@ namespace EmpyrionPrime.ModFramework
         private readonly IDictionary<CmdId, Delegate> _eventHandlers = new Dictionary<CmdId, Delegate>();
         private readonly object _eventHandlersLock = new object();
 
-        private readonly ILogger<ApiEvents> _logger;
+        private readonly ILogger _logger;
 
-        internal protected ApiEvents(ILogger<ApiEvents> logger)
+        internal protected ApiEvents(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }

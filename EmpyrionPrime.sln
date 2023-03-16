@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrameworkPlugins", "Example
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmpyrionPrime.ModFramework", "EmpyrionPrime.ModFramework\EmpyrionPrime.ModFramework.csproj", "{7084BA93-1AA7-4510-9067-5F9EF5B7A1CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlyModInterface", "ExamplePlugins\OnlyModInterface\OnlyModInterface.csproj", "{F3133E61-4987-4D82-91AF-8CE84D655252}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{7084BA93-1AA7-4510-9067-5F9EF5B7A1CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7084BA93-1AA7-4510-9067-5F9EF5B7A1CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7084BA93-1AA7-4510-9067-5F9EF5B7A1CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3133E61-4987-4D82-91AF-8CE84D655252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3133E61-4987-4D82-91AF-8CE84D655252}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3133E61-4987-4D82-91AF-8CE84D655252}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3133E61-4987-4D82-91AF-8CE84D655252}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +72,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{E95E66E2-F50E-4B68-9FF7-DC8B261C36D6} = {D6B0BDC2-24E5-4F70-89DB-87D85A2522C9}
 		{C5FED5B1-4E12-4B03-89E7-18FBFB40B430} = {D6B0BDC2-24E5-4F70-89DB-87D85A2522C9}
+		{F3133E61-4987-4D82-91AF-8CE84D655252} = {D6B0BDC2-24E5-4F70-89DB-87D85A2522C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {563B8DBA-38A9-47CD-852E-602F254AA43D}

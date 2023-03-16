@@ -9,7 +9,7 @@ namespace FrameworkPlugins;
 
 public class NoModInterface : IEmpyrionPlugin
 {
-    private readonly ILogger<NoModInterface> _logger;
+    private readonly ILogger _logger;
     private readonly IEmpyrionGameApi<NoModInterface> _empyrionGameApi;
 
     public string Name => "NoModInterface";
@@ -18,16 +18,18 @@ public class NoModInterface : IEmpyrionPlugin
     public ModInterface? ModInterface { get; } = null;
 
     public NoModInterface(
-        ILogger<NoModInterface> logger, 
+        //ILogger<NoModInterface> logger, 
+        ILoggerFactory loggerFactory,
         IEmpyrionGameApi<NoModInterface> empyrionGameApi,
         IApiEvents<NoModInterface> apiEvents,
         IApiRequests<NoModInterface> apiRequests)
     {
-        _logger = logger;
+        //_logger = logger;
+        _logger = loggerFactory.CreateLogger<NoModInterface>("Main");
         _empyrionGameApi = empyrionGameApi;
 
         // ILogger can be used for more indepth logging than ModGameAPI.Console_Write
-        _logger.LogInformation("{PluginType} loaded", GetType().Name);
+        _logger.LogInformation("{PluginType} loaded", Name);
 
         // Console_Write is still available, along with the other ModGameAPI methods
         _empyrionGameApi.ModGameAPI.Console_Write("Using ModGameApi outside of ModInterface!");

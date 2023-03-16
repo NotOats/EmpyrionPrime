@@ -17,7 +17,7 @@ namespace EmpyrionPrime.ModFramework.Api
         private readonly static int _sequenceStartNumber = 4096;
         private static int _nextSequenceNumber = new Random().Next(_sequenceStartNumber, ushort.MaxValue);
 
-        internal protected RequestBroker(ILogger<RequestBroker> logger, ModGameAPI gameApi)
+        internal protected RequestBroker(ILogger logger, ModGameAPI gameApi)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _gameApi = gameApi ?? throw new ArgumentNullException(nameof(gameApi));

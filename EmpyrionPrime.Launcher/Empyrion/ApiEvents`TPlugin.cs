@@ -1,5 +1,6 @@
 ﻿using EmpyrionPrime.ModFramework;
 using EmpyrionPrime.ModFramework.Api;
+using EmpyrionPrime.ModFramework.Extensions;
 using EmpyrionPrime.Plugin;
 using Microsoft.Extensions.Logging;
 
@@ -9,8 +10,8 @@ internal class ApiEvents<TPlugin> : ApiEvents, IApiEvents<TPlugin>, IDisposable 
 {
     private readonly IEmpyrionGameApi<TPlugin> _empyrionGameApi;
 
-    public ApiEvents(ILogger<ApiEvents> logger, IEmpyrionGameApi<TPlugin> empyrionGameApi)
-        : base(logger)
+    public ApiEvents(ILoggerFactory loggerFactory, IEmpyrionGameApi<TPlugin> empyrionGameApi)
+        : base(loggerFactory.CreateLogger<TPlugin, ApiEvents>())
     {
         _empyrionGameApi = empyrionGameApi;
         _empyrionGameApi.GameEvent += HandleGameEvent;

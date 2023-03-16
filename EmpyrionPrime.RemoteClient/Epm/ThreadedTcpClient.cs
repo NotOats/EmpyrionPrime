@@ -94,7 +94,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
 
         private void ReadThread(object cancellationToken)
         {
-            _logger.LogInformation($"Read thread started (id {Thread.CurrentThread.ManagedThreadId})");
+            _logger.LogDebug("Read thread started (id {ThreadId})", Thread.CurrentThread.ManagedThreadId);
 
             var token = (CancellationToken)cancellationToken;
 
@@ -148,7 +148,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
 
         private void WriteThread(object cancellationToken)
         {
-            _logger.LogInformation($"Write thread started (id {Thread.CurrentThread.ManagedThreadId})");
+            _logger.LogDebug("Write thread started (id {ThreadId})", Thread.CurrentThread.ManagedThreadId);
 
             var token = (CancellationToken)cancellationToken;
 
@@ -206,7 +206,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
                 if (_tcpClient != null && _tcpClient.Connected)
                     return;
 
-                _logger.LogInformation($"Connecting to {_ipAddress}:{_port}");
+                _logger.LogDebug("Connecting to {server_address}:{server_port}", _ipAddress, _port);
 
                 _tcpClient = new TcpClient(_ipAddress, _port);
 
@@ -214,7 +214,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
                 _tcpReader = new BinaryReader(stream);
                 _tcpWriter = new BinaryWriter(stream);
 
-                _logger.LogInformation("Connected and created stream reader/writer");
+                _logger.LogInformation("Connected to {server_address}:{server_port}", _ipAddress, _port);
 
                 OnConnected?.Invoke();
             }

@@ -1,30 +1,46 @@
-﻿using EmpyrionPrime.Plugin;
+﻿using Eleon.Modding;
+using EmpyrionPrime.Plugin;
 using System.Reflection;
 
 namespace EmpyrionPrime.Launcher.Plugins;
 
 internal static class PluginFinder
 {
-    public static IReadOnlyCollection<Type> GetPluginTypes(Assembly assembly)
+    public static IEnumerable<Type> GetPluginTypes(Assembly assembly)
     {
         if (assembly == null)
             throw new ArgumentNullException(nameof(assembly));
 
-        var result = new List<Type>();
-
-        try
+        IReadOnlyList<Type> FindTypes<TType>()
         {
-            foreach (var type in assembly.GetTypes())
+            var result = new List<Type>();
+
+            try
             {
-                if (!type.IsAbstract && type.IsAssignableTo(typeof(IEmpyrionPlugin)))
-                    result.Add(type);
+                foreach (var type in assembly.GetTypes())
+                {
+                    if (!type.IsAbstract && type.IsAssignableTo(typeof(TType)))
+                        result.Add(type);
+                }
             }
-        }
-        catch (ReflectionTypeLoadException)
-        {
+            catch (ReflectionTypeLoadException)
+            {
+            }
+
+            return result;
         }
 
-        return result;
+        // Load IEmpyrionPlugins first
+        var plugins = FindTypes<IEmpyrionPlugin>();
+        if (plugins.Count > 0)
+            return plugins;
+
+        // If none are found but we have ModInterfaces wrap them
+        var mods = FindTypes<ModInterface>();
+        if (mods.Count > 0)
+            return mods.Select(mod => typeof(ModInterfaceWrapper<>).MakeGenericType(mod));
+
+        return Enumerable.Empty<Type>();
     }
 
     public static IEnumerable<string> FindAssembliesWithPlugins(string searchPath)

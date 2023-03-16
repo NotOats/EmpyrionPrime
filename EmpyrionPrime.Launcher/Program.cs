@@ -1,6 +1,7 @@
 ﻿using EmpyrionPrime.Launcher;
 using EmpyrionPrime.Launcher.Empyrion;
 using EmpyrionPrime.Launcher.Plugins;
+using EmpyrionPrime.ModFramework;
 using EmpyrionPrime.ModFramework.Api;
 using EmpyrionPrime.Plugin;
 using EmpyrionPrime.RemoteClient;
@@ -19,27 +20,17 @@ host.Configuration.AddJsonFile("appsettings.json");
 host.Configuration.AddEnvironmentVariables();
 host.Configuration.AddCommandLine(args);
 
+host.Services.Configure<ConsoleLifetimeOptions>(opts => opts.SuppressStatusMessages = true);
+host.Services.Configure<EmpyrionSettings>(host.Configuration.GetSection("Empyrion"));
+host.Services.Configure<PluginsSettings>(host.Configuration.GetSection("Plugins"));
+
 // Logging
 host.Logging.ClearProviders();
 host.Logging.AddConfiguration(host.Configuration);
 host.Logging.AddConsole();
 
-// Specific Settings
-host.Services.Configure<EmpyrionSettings>(host.Configuration.GetSection("Empyrion"));
-host.Services.Configure<PluginsSettings>(host.Configuration.GetSection("Plugins"));
-
-// Services
-// Suppress LifeCycle messages
-host.Services.Configure<ConsoleLifetimeOptions>(opts => opts.SuppressStatusMessages = true);
-
-// Add Empyrion Services
+// Add Empyrion & Plugins
 host.Services.AddRemoteEmpyrion();
-host.Services.AddSingleton(typeof(IEmpyrionGameApi<>), typeof(RemoteEmpyrionGameApi<>));
-host.Services.AddSingleton(typeof(IRequestBroker<>), typeof(RequestBroker<>));
-host.Services.AddSingleton(typeof(IApiRequests<>), typeof(ApiRequests<>));
-host.Services.AddSingleton(typeof(IApiEvents<>), typeof(ApiEvents<>));
-
-// Add Plugin Services
 host.Services.AddSingleton<IPluginManager, PluginManager>();
 host.Services.AddHostedService<ModInterfaceBroker>();
 
@@ -65,5 +56,10 @@ internal static class ServiceCollectionExtensions
 
             return client;
         });
+
+        services.AddSingleton(typeof(IEmpyrionGameApi<>), typeof(RemoteEmpyrionGameApi<>));
+        services.AddSingleton(typeof(IRequestBroker<>), typeof(RequestBroker<>));
+        services.AddSingleton(typeof(IApiRequests<>), typeof(ApiRequests<>));
+        services.AddSingleton(typeof(IApiEvents<>), typeof(ApiEvents<>));
     }
 }

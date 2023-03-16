@@ -1,4 +1,5 @@
 ﻿using EmpyrionPrime.ModFramework.Api;
+using EmpyrionPrime.ModFramework.Extensions;
 using EmpyrionPrime.Plugin;
 using Microsoft.Extensions.Logging;
 
@@ -8,8 +9,8 @@ internal class RequestBroker<TPlugin> : RequestBroker, IRequestBroker<TPlugin>, 
 {
     private readonly IEmpyrionGameApi _empyrionGameApi;
 
-    public RequestBroker(ILogger<RequestBroker> logger, IEmpyrionGameApi<TPlugin> empyrionGameApi)
-        : base(logger, empyrionGameApi.ModGameAPI)
+    public RequestBroker(ILoggerFactory loggerFactory, IEmpyrionGameApi<TPlugin> empyrionGameApi)
+        : base(loggerFactory.CreateLogger<TPlugin, RequestBroker>(), empyrionGameApi.ModGameAPI)
     {
         _empyrionGameApi = empyrionGameApi;
         _empyrionGameApi.GameEvent += HandleGameEvent;
