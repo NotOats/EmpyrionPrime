@@ -2,7 +2,6 @@
 using EmpyrionPrime.Launcher.Plugins;
 using EmpyrionPrime.Plugin;
 using EmpyrionPrime.RemoteClient;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -36,9 +35,18 @@ internal class ModInterfaceBroker : BackgroundService
         // Start each plugin
         _pluginManager.ExecuteOnEachPlugin(plugin =>
         {
-            var gameApiType = typeof(IEmpyrionGameApi<>).MakeGenericType(plugin.GetType());
-            var gameApi = _serviceProvider.GetRequiredService(gameApiType) as IEmpyrionGameApi
-                ?? throw new Exception($"Failed to load IEmpyrionGameApi<> for {plugin.GetType()}");
+            if (plugin.ModInterface == null)
+                return;
+
+            var apiFactoryType = typeof(IEmpyrionApiFactory<>).MakeGenericType(plugin.GetType());
+            var apiFactory = _serviceProvider.GetService(apiFactoryType)
+                ?? throw new Exception($"Failed to load IEmpyrionApiFactory<> for {plugin.GetType()}");
+
+            var create = apiFactoryType.GetMethod("Create")?.MakeGenericMethod(typeof(IBasicEmpyrionApi))
+                ?? throw new Exception($"Failed to make generic IEmpyrionApiFactory<>.Create<IBasicEmpyrionApi> for type {plugin.GetType()}");
+
+            var gameApi = create.Invoke(apiFactory, null) as IBasicEmpyrionApi
+                ?? throw new Exception($"Failed to load IBasicEmpyrionApi for type {plugin.GetType()}");
 
             plugin.ModInterface?.Game_Start(gameApi.ModGameAPI);
         });

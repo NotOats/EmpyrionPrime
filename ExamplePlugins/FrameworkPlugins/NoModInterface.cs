@@ -4,13 +4,15 @@ using EmpyrionPrime.ModFramework.Extensions;
 using EmpyrionPrime.ModFramework.Api;
 using EmpyrionPrime.Plugin;
 using Microsoft.Extensions.Logging;
+using EmpyrionPrime.ModFramework;
 
 namespace FrameworkPlugins;
 
 public class NoModInterface : IEmpyrionPlugin
 {
     private readonly ILogger _logger;
-    private readonly IEmpyrionGameApi<NoModInterface> _empyrionGameApi;
+    private readonly IExtendedEmpyrionApi _empyrionGameApi;
+    private readonly IApiRequests _apiRequests;
 
     public string Name => "NoModInterface";
     public string Author => "NotOats";
@@ -18,15 +20,12 @@ public class NoModInterface : IEmpyrionPlugin
     public ModInterface? ModInterface { get; } = null;
 
     public NoModInterface(
-        //ILogger<NoModInterface> logger, 
         ILoggerFactory loggerFactory,
-        IEmpyrionGameApi<NoModInterface> empyrionGameApi,
-        IApiEvents<NoModInterface> apiEvents,
-        IApiRequests<NoModInterface> apiRequests)
+        IEmpyrionApiFactory<NoModInterface> apiFactory)
     {
-        //_logger = logger;
         _logger = loggerFactory.CreateLogger<NoModInterface>("Main");
-        _empyrionGameApi = empyrionGameApi;
+        _empyrionGameApi = apiFactory.Create<IExtendedEmpyrionApi>();
+        _apiRequests = apiFactory.Create<IApiRequests>();
 
         // ILogger can be used for more indepth logging than ModGameAPI.Console_Write
         _logger.LogInformation("{PluginType} loaded", Name);
@@ -35,18 +34,19 @@ public class NoModInterface : IEmpyrionPlugin
         _empyrionGameApi.ModGameAPI.Console_Write("Using ModGameApi outside of ModInterface!");
 
 
-        // Access ApiEvents and ApiRequests directly
+        // Access events and make requests via interface
+        var apiEvents = apiFactory.Create<IApiEvents>();
         apiEvents.PlayerConnected += async id =>
         {
-            var playerInfo = await apiRequests.PlayerInfo(id);
-            var playfieldStats = await apiRequests.PlayfieldStats(playerInfo.playfield.ToPString());
+            var playerInfo = await _apiRequests.PlayerInfo(id);
+            var playfieldStats = await _apiRequests.PlayfieldStats(playerInfo.playfield.ToPString());
 
             _logger.LogInformation("'{PlayerInfo}' loaded into '{PlayfieldName}' (pid {PlayfieldProcessId})",
                 playerInfo.playerName, playfieldStats.playfield, playfieldStats.processId);
         };
 
 
-        // Or even handle chat messages via IEmpyrionGameApi
+        // Or even handle chat messages via IExtendedEmpyrionApi
         _empyrionGameApi.ChatMessage += messageData =>
         {
             _logger.LogInformation("Echoing {EntityId}: {Text}", messageData.SenderEntityId, messageData.Text);

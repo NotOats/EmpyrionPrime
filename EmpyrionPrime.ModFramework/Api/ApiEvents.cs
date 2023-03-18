@@ -9,7 +9,7 @@ namespace EmpyrionPrime.ModFramework
     public delegate Task AsyncGameEventHandler();
     public delegate Task AsyncGameEventHandler<TEventArgs>(TEventArgs e);
 
-    public partial class ApiEvents
+    public partial class ApiEvents : IApiEvents
     {
         private readonly IDictionary<CmdId, Delegate> _eventHandlers = new Dictionary<CmdId, Delegate>();
         private readonly object _eventHandlersLock = new object();

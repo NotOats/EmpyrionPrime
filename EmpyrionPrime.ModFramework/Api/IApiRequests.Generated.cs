@@ -1,10 +1,11 @@
 using Eleon.Modding;
+using EmpyrionPrime.Plugin;
 using System;
 using System.Threading.Tasks;
 
 namespace EmpyrionPrime.ModFramework
 {
-    public interface IApiRequests
+    public interface IApiRequests : IEmpyrionApi
     {
         /// <summary>
         /// Command:  CmdId.Request_Playfield_List

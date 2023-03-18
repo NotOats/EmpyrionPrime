@@ -8,12 +8,13 @@
 <#@ import namespace="EmpyrionPrime.ModFramework" #>
 <#@ output extension=".cs" #>
 using Eleon.Modding;
+using EmpyrionPrime.Plugin;
 using System;
 using System.Threading.Tasks;
 
 namespace EmpyrionPrime.ModFramework
 {
-    public interface IApiRequests
+    public interface IApiRequests : IEmpyrionApi
     {
 <# 
 foreach(var item in EmpyrionApiSchema.ApiRequests)

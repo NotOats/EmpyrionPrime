@@ -1,7 +1,6 @@
 ﻿using EmpyrionPrime.Launcher;
 using EmpyrionPrime.Launcher.Empyrion;
 using EmpyrionPrime.Launcher.Plugins;
-using EmpyrionPrime.ModFramework;
 using EmpyrionPrime.ModFramework.Api;
 using EmpyrionPrime.Plugin;
 using EmpyrionPrime.RemoteClient;
@@ -57,9 +56,6 @@ internal static class ServiceCollectionExtensions
             return client;
         });
 
-        services.AddSingleton(typeof(IEmpyrionGameApi<>), typeof(RemoteEmpyrionGameApi<>));
-        services.AddSingleton(typeof(IRequestBroker<>), typeof(RequestBroker<>));
-        services.AddSingleton(typeof(IApiRequests<>), typeof(ApiRequests<>));
-        services.AddSingleton(typeof(IApiEvents<>), typeof(ApiEvents<>));
+        services.AddSingleton(typeof(IEmpyrionApiFactory<>), typeof(EmpyrionApiFactory<>));
     }
 }

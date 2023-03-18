@@ -1,8 +1,9 @@
 using Eleon.Modding;
+using EmpyrionPrime.Plugin;
 
 namespace EmpyrionPrime.ModFramework
 {
-    public interface IApiEvents
+    public interface IApiEvents : IEmpyrionApi
     {
         /// <summary>
         /// Command:  CmdId.Event_Playfield_Loaded

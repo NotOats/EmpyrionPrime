@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Eleon;
+using Eleon.Modding;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 
@@ -25,7 +27,40 @@ namespace EmpyrionPrime.RemoteClient.Epm
             _tcpClient = new ThreadedTcpClient(_logger, address, port);
             _tcpClient.OnConnected += () => { OnConnected?.Invoke(); };
             _tcpClient.OnDisconnected += () => { OnDisconnected?.Invoke(); };
-            _tcpClient.GameEventHandler += (gameEvent) => { GameEventHandler?.Invoke(gameEvent); };
+            _tcpClient.GameEventHandler += (gameEvent) =>
+            {
+                GameEventHandler?.Invoke(gameEvent);
+
+                // Convert EPM's Event_Chat into a regular Event_ChatMessage
+                // This is kind of a hacky work around to get regular mods to work with EPM's chat system
+                // Unfortunately the sequence id will probably be messed up, not sure if this will effect anything
+                if(gameEvent.Id == CommandId.Event_Chat && gameEvent.Payload is MessageData message)
+                {
+                    // Weird mapping, sourced from EmpyrionNetApiAccess & server testing
+                    var type = -1;
+                    switch (message.Channel)
+                    {
+                        case Eleon.MsgChannel.Global:
+                            type = 3;
+                            break;
+                        case Eleon.MsgChannel.Faction:
+                        case Eleon.MsgChannel.Alliance:
+                            type = 5;
+                            break;
+                        case Eleon.MsgChannel.SinglePlayer:
+                            type = 8;
+                            break;
+                        case Eleon.MsgChannel.Server:
+                            type = 9;
+                            break;
+                    }
+
+                    var chatInfo = new ChatInfo(message.SenderEntityId, message.Text, message.RecipientEntityId, message.RecipientFaction.Id, (byte)type);
+                    var chatEvent = new GameEvent(gameEvent.ClientId, CommandId.Event_ChatMessage, gameEvent.SequenceNumber, chatInfo);
+
+                    GameEventHandler?.Invoke(chatEvent);
+                }
+            };
         }
 
         public void Dispose()

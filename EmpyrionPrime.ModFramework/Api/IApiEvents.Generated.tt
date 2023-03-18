@@ -8,10 +8,11 @@
 <#@ import namespace="EmpyrionPrime.ModFramework" #>
 <#@ output extension=".cs" #>
 using Eleon.Modding;
+using EmpyrionPrime.Plugin;
 
 namespace EmpyrionPrime.ModFramework
 {
-    public interface IApiEvents
+    public interface IApiEvents : IEmpyrionApi
     {
 <#
 foreach(var kvp in EmpyrionApiSchema.ApiEvents)

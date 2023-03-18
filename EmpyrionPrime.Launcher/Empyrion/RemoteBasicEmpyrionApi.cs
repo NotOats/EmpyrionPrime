@@ -1,5 +1,4 @@
-﻿using Eleon;
-using Eleon.Modding;
+﻿using Eleon.Modding;
 using EmpyrionPrime.Launcher.Plugins;
 using EmpyrionPrime.ModFramework.Extensions;
 using EmpyrionPrime.Plugin;
@@ -8,52 +7,39 @@ using Microsoft.Extensions.Logging;
 
 namespace EmpyrionPrime.Launcher.Empyrion;
 
-internal class RemoteEmpyrionGameApi<TPlugin> : IEmpyrionGameApi<TPlugin>, IDisposable where TPlugin : IEmpyrionPlugin
+internal class RemoteBasicEmpyrionApi<TPlugin> : IBasicEmpyrionApi, IDisposable where TPlugin : IEmpyrionPlugin
 {
     private readonly ILogger _logger;
-    private readonly IRemoteEmpyrion _remoteEmpyrion;
 
-    public event ChatMessageHandler? ChatMessage;
-    public event GameEventHandler? GameEvent;
+    protected IRemoteEmpyrion RemoteEmpyrion { get; }
 
     public ModGameAPI ModGameAPI { get; }
 
-    public RemoteEmpyrionGameApi(ILoggerFactory loggerFactory, IRemoteEmpyrion remoteEmpyrion)
+    public event GameEventHandler? GameEvent;
+
+    public RemoteBasicEmpyrionApi(ILoggerFactory loggerFactory, IRemoteEmpyrion remoteEmpyrion)
     {
         // Override for clean logging with ModInterfaceWrapper
         var pluginType = typeof(TPlugin);
-        if (pluginType.GetGenericTypeDefinition() == typeof(ModInterfaceWrapper<>))
+        if (pluginType.IsGenericType && pluginType.GetGenericTypeDefinition() == typeof(ModInterfaceWrapper<>))
             pluginType = pluginType.GetGenericArguments()[0];
 
         _logger = loggerFactory?.CreateLogger(pluginType.Name, "Main") ?? throw new ArgumentNullException(nameof(loggerFactory));
-        _remoteEmpyrion = remoteEmpyrion ?? throw new ArgumentNullException(nameof(remoteEmpyrion));
+        RemoteEmpyrion = remoteEmpyrion ?? throw new ArgumentNullException(nameof(remoteEmpyrion));
 
-        ModGameAPI = new RemoteModGameApi(_logger, _remoteEmpyrion);
+        ModGameAPI = new RemoteModGameApi(_logger, RemoteEmpyrion);
 
-        _remoteEmpyrion.GameEventHandler += HandleGameEvent;
+        RemoteEmpyrion.GameEventHandler += HandleGameEvent;
     }
 
     public void Dispose()
     {
-        _remoteEmpyrion.GameEventHandler -= HandleGameEvent;
+        RemoteEmpyrion.GameEventHandler -= HandleGameEvent;
     }
 
-    public void SendChatMessage(MessageData messageData)
-    {
-        // TODO: Handle different types of remote empyrion instances.
-        // This is currently hard coded for EPM which listens
-        // for eMod_Comands.Request_Chat (200) events
-        _remoteEmpyrion.SendRequest((CommandId)200, 0, messageData);
-    }
-
-    private void HandleGameEvent(GameEvent gameEvent)
+    protected virtual void HandleGameEvent(GameEvent gameEvent)
     {
         GameEvent?.Invoke((CmdId)gameEvent.Id, gameEvent.SequenceNumber, gameEvent.Payload);
-
-        // Hard coded for EPM which sends eMod_Commands.Event_Chat (201)
-        // events on chat message
-        if ((int)gameEvent.Id == 201 && gameEvent.Payload is MessageData messageData)
-            ChatMessage?.Invoke(messageData);
     }
 
     private class RemoteModGameApi : ModGameAPI
