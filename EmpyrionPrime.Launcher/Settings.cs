@@ -14,7 +14,7 @@ internal class EmpyrionSettings
 
     public string EpmAddress { get; set; } = "127.0.0.1";
     public int EpmPort { get; set; } = 12345;
-    public int EpmClientId { get; set; } = -1;
+    public int EpmClientId { get; set; } = Environment.ProcessId;
 }
 
 internal class PluginsSettings
