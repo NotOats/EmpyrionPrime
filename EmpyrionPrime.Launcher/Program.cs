@@ -1,6 +1,8 @@
 ﻿using EmpyrionPrime.Launcher;
 using EmpyrionPrime.Launcher.Empyrion;
+using EmpyrionPrime.Launcher.Framework.Configuration;
 using EmpyrionPrime.Launcher.Plugins;
+using EmpyrionPrime.ModFramework.Configuration;
 using EmpyrionPrime.Plugin;
 using EmpyrionPrime.RemoteClient;
 using EmpyrionPrime.RemoteClient.Epm;
@@ -50,6 +52,7 @@ var builder = Host.CreateDefaultBuilder(args)
         });
 
         services.AddSingleton(typeof(IEmpyrionApiFactory<>), typeof(EmpyrionApiFactory<>));
+        services.AddSingleton(typeof(IPluginOptionsFactory<>), typeof(PluginOptionsFactory<>));
         services.AddSingleton<IPluginManager, PluginManager>();
         services.AddHostedService<ModInterfaceBroker>();
     });

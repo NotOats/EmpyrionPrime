@@ -25,6 +25,12 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="if $(ConfigurationName) == Debug xcopy &quot;$(TargetDir)&quot; &quot;$(SolutionDir)EmpyrionPrime.Launcher\bin\Debug\net7.0\Plugins\$(ProjectName)\&quot; /s /y /i" />
   </Target>
