@@ -17,11 +17,11 @@ var configuration = new ConfigurationBuilder()
     .SetBasePath(Environment.CurrentDirectory)
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
-    .AddEnvironmentVariables()
+    .AddEnvironmentVariables(prefix: "DOTNET_")
     .AddCommandLine(args)
     .Build();
 
-var builder = Host.CreateDefaultBuilder()
+var builder = Host.CreateDefaultBuilder(args)
     .ConfigureHostConfiguration(config =>
     {
         config.Sources.Clear();
