@@ -2,10 +2,10 @@
 <#@ assembly name="netstandard" #>
 <#@ assembly name="System.Core" #>
 <#@ assembly name="$(SolutionDir)\dependencies\Mif.dll" #>
-<#@ assembly name="$(SolutionDir)\EmpyrionPrime.ModFramework\bin\Debug\netstandard2.0\EmpyrionPrime.ModFramework.dll" #>
+<#@ assembly name="$(SolutionDir)\EmpyrionPrime.Schema\bin\Debug\netstandard2.0\EmpyrionPrime.Schema.dll" #>
 <#@ import namespace="Eleon.Modding" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="EmpyrionPrime.ModFramework" #>
+<#@ import namespace="EmpyrionPrime.Schema.ModInterface" #>
 <#@ output extension=".cs" #>
 using Eleon.Modding;
 using System;
@@ -15,7 +15,7 @@ namespace EmpyrionPrime.ModFramework
     public partial class ApiEvents
     {
 <#
-foreach(var kvp in EmpyrionApiSchema.ApiEvents)
+foreach(var kvp in ApiSchema.ApiEvents)
 {
     var commandIdString = $"CmdId.{kvp.Key}";
     var eventName = kvp.Key.ToString().Replace("Event_", "").Replace("_","");

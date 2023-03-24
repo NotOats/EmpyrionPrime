@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EmpyrionPrime.Schema\EmpyrionPrime.Schema.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Mif">
       <HintPath>..\dependencies\Mif.dll</HintPath>
     </Reference>

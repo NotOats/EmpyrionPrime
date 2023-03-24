@@ -78,7 +78,7 @@ namespace EmpyrionPrime.ModFramework
                 throw new ArgumentNullException(nameof(handler));
 
 #if DEBUG
-            _logger.LogDebug("ARemoving {handler} from {commandId}", handler, commandId);
+            _logger.LogDebug("Removing {handler} from {commandId}", handler, commandId);
 #endif
 
             lock (_eventHandlersLock)

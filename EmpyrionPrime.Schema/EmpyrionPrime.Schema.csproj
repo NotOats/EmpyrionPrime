@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Mif">
+      <HintPath>..\dependencies\Mif.dll</HintPath>
+    </Reference>
+    <Reference Include="ModApi">
+      <HintPath>..\dependencies\ModApi.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
