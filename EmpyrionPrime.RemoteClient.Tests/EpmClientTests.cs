@@ -1,4 +1,5 @@
-﻿using EmpyrionPrime.RemoteClient.Epm;
+﻿using Eleon.Modding;
+using EmpyrionPrime.RemoteClient.Epm;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
@@ -43,8 +44,8 @@ public class EpmClientTests
     }
 
     [Theory]
-    [InlineData(CommandId.Request_Dedi_Stats, 42000, null)]
-    public void Test_Request_Event(CommandId id, ushort seqNum, object? payload)
+    [InlineData(CmdId.Request_Dedi_Stats, 42000, null)]
+    public void Test_Request_Event(CmdId id, ushort seqNum, object? payload)
     {
         var trigger = new ManualResetEventSlim(false);
         var client = CreateClient();

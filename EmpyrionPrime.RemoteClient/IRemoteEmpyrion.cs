@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Eleon.Modding;
+using System;
 
 namespace EmpyrionPrime.RemoteClient
 {
@@ -25,6 +26,6 @@ namespace EmpyrionPrime.RemoteClient
         /// <param name="id">The request's id</param>
         /// <param name="sequenceNumber">The request's sequence number, this is returned in the follow up response.</param>
         /// <param name="payload">The request's optional payload data</param>
-        void SendRequest(CommandId id, ushort sequenceNumber, object payload);
+        void SendRequest(CmdId id, ushort sequenceNumber, object payload);
     }
 }

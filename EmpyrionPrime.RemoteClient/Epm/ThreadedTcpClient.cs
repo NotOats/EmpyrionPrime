@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Eleon.Modding;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
@@ -111,19 +112,23 @@ namespace EmpyrionPrime.RemoteClient.Epm
                     var sequenceNumber = _tcpReader.ReadUInt16();
 
                     var payloadLength = _tcpReader.ReadInt32();
-                    if (payloadLength == 0)
-                        gameEvent = new GameEvent(clientId, commandId, sequenceNumber, null);
-
-                    var buffer = new byte[payloadLength];
-                    var read = 0;
-
-                    do
+                    if (payloadLength != 0)
                     {
-                        read += _tcpReader.Read(buffer, read, payloadLength - read);
-                    } while (read < payloadLength && !token.IsCancellationRequested);
+                        var buffer = new byte[payloadLength];
+                        var read = 0;
 
-                    var payload = CommandSerializer.Deserialize(commandId, buffer);
-                    gameEvent = new GameEvent(clientId, commandId, sequenceNumber, payload);
+                        do
+                        {
+                            read += _tcpReader.Read(buffer, read, payloadLength - read);
+                        } while (read < payloadLength && !token.IsCancellationRequested);
+
+                        var payload = CommandSerializer.Deserialize(commandId, buffer);
+                        gameEvent = new GameEvent(clientId, (CmdId)commandId, sequenceNumber, payload);
+                    }
+                    else
+                    {
+                        gameEvent = new GameEvent(clientId, (CmdId)commandId, sequenceNumber, null);
+                    }
                 }
                 catch (IOException ex)
                 {
@@ -166,7 +171,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
                 {
                     while (_writeQueue.TryDequeue(out GameEvent gameEvent) && !token.IsCancellationRequested)
                     {
-                        var payload = CommandSerializer.Serialize(gameEvent.Id, gameEvent.Payload);
+                        var payload = CommandSerializer.Serialize((CommandId)gameEvent.Id, gameEvent.Payload);
 
                         _tcpWriter.Write((int)gameEvent.Id);
                         _tcpWriter.Write(gameEvent.ClientId);

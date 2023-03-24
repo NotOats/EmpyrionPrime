@@ -34,7 +34,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
                 // Convert EPM's Event_Chat into a regular Event_ChatMessage
                 // This is kind of a hacky work around to get regular mods to work with EPM's chat system
                 // Unfortunately the sequence id will probably be messed up, not sure if this will effect anything
-                if(gameEvent.Id == CommandId.Event_Chat && gameEvent.Payload is MessageData message)
+                if((CommandId)gameEvent.Id == CommandId.Event_Chat && gameEvent.Payload is MessageData message)
                 {
                     // Weird mapping, sourced from EmpyrionNetApiAccess & server testing
                     var type = -1;
@@ -56,7 +56,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
                     }
 
                     var chatInfo = new ChatInfo(message.SenderEntityId, message.Text, message.RecipientEntityId, message.RecipientFaction.Id, (byte)type);
-                    var chatEvent = new GameEvent(gameEvent.ClientId, CommandId.Event_ChatMessage, gameEvent.SequenceNumber, chatInfo);
+                    var chatEvent = new GameEvent(gameEvent.ClientId, (CmdId)CommandId.Event_ChatMessage, gameEvent.SequenceNumber, chatInfo);
 
                     GameEventHandler?.Invoke(chatEvent);
                 }
@@ -78,7 +78,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
             _tcpClient.Start();
         }
 
-        public void SendRequest(CommandId id, ushort sequenceNumber, object payload)
+        public void SendRequest(CmdId id, ushort sequenceNumber, object payload)
         {
             var request = new GameEvent(ClientId, id, sequenceNumber, payload);
 
