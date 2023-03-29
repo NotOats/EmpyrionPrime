@@ -1,4 +1,4 @@
-﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="System.Core" #>
 <#@ assembly name="$(SolutionDir)\dependencies\Mif.dll" #>
 <#@ import namespace="Eleon.Modding" #>
@@ -6,9 +6,9 @@
 <#@ output extension=".cs" #>
 using Eleon.Modding;
 
-namespace EmpyrionPrime.RemoteClient
+namespace EmpyrionPrime.RemoteClient.Epm
 {
-	public enum CommandId : int
+	public enum GameEventId : int
 	{
 		// Imported from Eleon.Modding
 <# 

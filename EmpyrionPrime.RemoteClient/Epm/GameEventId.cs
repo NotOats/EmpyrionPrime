@@ -1,8 +1,8 @@
-﻿using Eleon.Modding;
+using Eleon.Modding;
 
-namespace EmpyrionPrime.RemoteClient
+namespace EmpyrionPrime.RemoteClient.Epm
 {
-	public enum CommandId : int
+	public enum GameEventId : int
 	{
 		// Imported from Eleon.Modding
 		Event_Playfield_Loaded                   = CmdId.Event_Playfield_Loaded,

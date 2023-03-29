@@ -1,4 +1,5 @@
 ﻿using Eleon;
+using Eleon.Modding;
 using EmpyrionPrime.Plugin;
 using EmpyrionPrime.RemoteClient;
 using Microsoft.Extensions.Logging;
@@ -21,7 +22,7 @@ internal class RemoteExtendedEmpyrionApi<TPlugin> : RemoteBasicEmpyrionApi<TPlug
         // TODO: Handle different types of remote empyrion instances.
         // This is currently hard coded for EPM which listens
         // for eMod_Comands.Request_Chat (200) events
-        RemoteEmpyrion.SendRequest((CommandId)200, 0, messageData);
+        RemoteEmpyrion.SendRequest((CmdId)200, 0, messageData);
     }
 
     protected override void HandleGameEvent(GameEvent gameEvent)

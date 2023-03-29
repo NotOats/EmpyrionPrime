@@ -1,5 +1,7 @@
 ﻿using Bogus;
 using Eleon.Modding;
+using EmpyrionPrime.RemoteClient.Epm;
+using EmpyrionPrime.RemoteClient.Epm.Serializers;
 using EmpyrionPrime.RemoteClient.Tests.TheoryData;
 using System;
 using System.Collections.Generic;
@@ -8,19 +10,19 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmpyrionPrime.RemoteClient.Tests;
+namespace EmpyrionPrime.RemoteClient.Tests.Epm;
 
-public class CommandSerializerTests
+public class GameEventSerializerTests
 {
     [Theory]
     [ClassData(typeof(EmpyrionApiCommandsTheoryData))]
-    public void Test_Full_Serialization(CommandId id, object original)
+    public void Test_Full_Serialization(GameEventId id, object original)
     {
-        var data = CommandSerializer.Serialize(id, original);
+        var data = GameEventSerializer.Serialize(id, original);
         Assert.NotNull(data);
         Assert.NotEmpty(data);
 
-        var returned = CommandSerializer.Deserialize(id, data);
+        var returned = GameEventSerializer.Deserialize(id, data);
         Assert.NotNull(returned);
 
         Assert.Equal(original.GetType(), returned.GetType());
@@ -38,7 +40,7 @@ public class CommandSerializerTests
 
         var original = faker.Generate();
 
-        Assert.Throws<ArgumentException>(() => CommandSerializer.Serialize(CommandId.Event_ChatMessage, original));
+        Assert.Throws<ArgumentException>(() => GameEventSerializer.Serialize(GameEventId.Event_ChatMessage, original));
     }
 
     private static bool PublicInstancePropertiesEqual(object x, object y)
@@ -53,7 +55,7 @@ public class CommandSerializerTests
 
         // Loop through properties
         var type = x.GetType();
-        foreach(var pi in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        foreach (var pi in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {
             var xVal = pi.GetValue(x);
             var yVal = pi.GetValue(y);

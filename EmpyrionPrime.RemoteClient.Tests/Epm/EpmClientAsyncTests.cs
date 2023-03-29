@@ -10,13 +10,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit.Abstractions;
 
-namespace EmpyrionPrime.RemoteClient.Tests;
-public class EpmClientTests
+namespace EmpyrionPrime.RemoteClient.Tests.Epm;
+
+public class EpmClientAsyncTests
 {
     private readonly ITestOutputHelper _outputHelper;
-    public EpmClientTests(ITestOutputHelper output)
+
+    public EpmClientAsyncTests(ITestOutputHelper outputHelper)
     {
-        _outputHelper = output;
+        _outputHelper = outputHelper;
     }
 
     [Fact]
@@ -24,28 +26,28 @@ public class EpmClientTests
     {
         var trigger = new ManualResetEventSlim(false);
         var client = CreateClient();
-        client.OnConnected += () => 
+
+        // Set trigger after connecting
+        client.OnConnected += () =>
         {
             _outputHelper.WriteLine($"Client Id {client.ClientId} connected");
             trigger.Set();
         };
 
         // Delay starting until after we're waiting
-        Task.Factory.StartNew(async () =>
+        _ = Task.Run(async () =>
         {
             await Task.Delay(500);
             client.Start();
         });
 
-        // Wait until we're connected
         var connected = trigger.Wait(5000);
-
         Assert.True(connected);
     }
 
     [Theory]
     [InlineData(CmdId.Request_Dedi_Stats, 42000, null)]
-    public void Test_Request_Event(CmdId id, ushort seqNum, object? payload)
+    public void Test_RequestEvent(CmdId id, ushort seqNum, object? payload)
     {
         var trigger = new ManualResetEventSlim(false);
         var client = CreateClient();
@@ -54,7 +56,7 @@ public class EpmClientTests
         client.OnConnected += () =>
         {
             _outputHelper.WriteLine($"Client Id {client.ClientId} connected");
-            Task.Factory.StartNew(async () =>
+            _ = Task.Run(async () =>
             {
                 await Task.Delay(500);
                 client.SendRequest(id, seqNum, payload);
@@ -64,33 +66,27 @@ public class EpmClientTests
         // Read response and trigger
         client.GameEventHandler += gameEvent =>
         {
-            if(gameEvent.SequenceNumber == seqNum)
-            {
-                _outputHelper.WriteLine(gameEvent.ToString());
-                trigger.Set();
-            }
+            if (gameEvent.SequenceNumber != seqNum)
+                return;
+
+            _outputHelper.WriteLine(gameEvent.ToString());
+            trigger.Set();
         };
 
-        Task.Factory.StartNew(async () =>
-        {
-            await Task.Delay(500);
-            client.Start();
-        });
+        client.Start();
 
         var recieved = trigger.Wait(5000);
         Assert.True(recieved);
-
     }
 
-    private EpmClient CreateClient()
+    private EpmClientAsync CreateClient()
     {
         var random = new Random();
         var clientId = random.Next();
 
         var logger = MockLogger<EpmClient>();
 
-        // Requires an active EGS server on the local machine
-        return new EpmClient(logger.Object, "127.0.0.1", 12345, clientId);
+        return new EpmClientAsync(logger.Object, "127.0.0.1", 12345, clientId);
     }
 
     private Mock<ILogger<T>> MockLogger<T>()
@@ -116,7 +112,7 @@ public class EpmClientTests
                 var logMessage = (string)invokeMethod?.Invoke(formatter, new[] { state, exception })!;
 
                 var output = $"{logLevel} - {logMessage}";
-                
+
                 _outputHelper.WriteLine(output);
                 Trace.WriteLine(output);
             }));

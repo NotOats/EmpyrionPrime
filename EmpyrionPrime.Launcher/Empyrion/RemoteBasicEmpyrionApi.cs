@@ -65,7 +65,7 @@ internal class RemoteBasicEmpyrionApi<TPlugin> : IBasicEmpyrionApi, IDisposable 
 
         public bool Game_Request(CmdId reqId, ushort seqNr, object data)
         {
-            _remoteEmpyrion.SendRequest((CommandId)reqId, seqNr, data);
+            _remoteEmpyrion.SendRequest(reqId, seqNr, data);
 
             return true;
         }
