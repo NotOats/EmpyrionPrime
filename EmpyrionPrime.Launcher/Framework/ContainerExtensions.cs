@@ -9,6 +9,8 @@ using EmpyrionPrime.RemoteClient;
 using SimpleInjector;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using EmpyrionPrime.ModFramework.Environment;
+using EmpyrionPrime.Launcher.Framework.Environment;
 
 namespace EmpyrionPrime.Launcher.Framework
 {
@@ -37,7 +39,6 @@ namespace EmpyrionPrime.Launcher.Framework
 
                 return factory(logger, remote);
             });
-
         }
 
         public static void RegisterFrameworkApis(this Container container, Type pluginType)
@@ -47,10 +48,16 @@ namespace EmpyrionPrime.Launcher.Framework
             if (!pluginType.IsAssignableTo(typeof(IEmpyrionPlugin)))
                 throw new ArgumentException("pluginType must be an IEmpyrionPlugin", nameof(pluginType));
 
+            // Framework Api
             container.RegisterSingleton<IRequestBroker, RequestBroker>();
             container.RegisterSingleton<IApiEvents, ApiEvents>();
             container.RegisterSingleton<IApiRequests, ApiRequests>();
+
+            // Framework Configuration
             container.RegisterGameApiGeneric<IPluginOptionsFactory>(typeof(PluginOptionsFactory<>), pluginType);
+
+            // Framework Environment
+            container.RegisterSingleton<IEmpyrionEnvironment, EmpyrionEnvironment>();
         }
 
         private static void RegisterGameApiGeneric<TInterface>(this Container container, Type genericType, Type pluginType)

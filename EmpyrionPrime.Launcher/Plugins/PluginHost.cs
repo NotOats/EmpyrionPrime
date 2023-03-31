@@ -89,9 +89,15 @@ internal class PluginHost : IPluginHost
     {
         var container = new Container();
 
-        // Basics
+        // Register container
         container.RegisterInstance<IServiceProvider>(container);
+
+        // Settings & Environment
+        container.RegisterInstance(_serviceProvider.GetRequiredService<EmpyrionSettings>());
+        container.RegisterInstance(_serviceProvider.GetRequiredService<PluginsSettings>());
         container.RegisterSingleton(_serviceProvider.GetRequiredService<IHostEnvironment>);
+
+        // Logging
         container.RegisterSingleton(_serviceProvider.GetRequiredService<ILoggerFactory>);
         //container.RegisterSingleton(typeof(ILogger<>), typeof(Logger<>));
         container.RegisterSingleton(() =>
