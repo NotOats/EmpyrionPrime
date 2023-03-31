@@ -1,5 +1,7 @@
 ﻿using Eleon;
 using Eleon.Modding;
+using EmpyrionPrime.Plugin;
+using EmpyrionPrime.RemoteClient.Epm.Api;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
@@ -83,6 +85,16 @@ namespace EmpyrionPrime.RemoteClient.Epm
             var request = new GameEvent(ClientId, id, sequenceNumber, payload);
 
             _tcpClient.SendPacket(request);
+        }
+
+        public IBasicEmpyrionApi CreateBasicApi(ILogger logger)
+        {
+            return new EpmBasicEmpyrionApi(logger, this);
+        }
+
+        public IExtendedEmpyrionApi CreateExtendedApi(ILogger logger)
+        {
+            return new EpmExtendedEmpyrionApi(logger, this);
         }
     }
 }

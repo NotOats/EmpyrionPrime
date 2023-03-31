@@ -1,4 +1,6 @@
 ﻿using Eleon.Modding;
+using EmpyrionPrime.Plugin;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace EmpyrionPrime.RemoteClient
@@ -27,5 +29,19 @@ namespace EmpyrionPrime.RemoteClient
         /// <param name="sequenceNumber">The request's sequence number, this is returned in the follow up response.</param>
         /// <param name="payload">The request's optional payload data</param>
         void SendRequest(CmdId id, ushort sequenceNumber, object payload);
+
+        /// <summary>
+        /// Creates an instance of IBasicEmpyrionApi for the IRemoteEmpyrion client
+        /// </summary>
+        /// <param name="logger">The logger the interface will use</param>
+        /// <returns></returns>
+        IBasicEmpyrionApi CreateBasicApi(ILogger logger);
+
+        /// <summary>
+        /// Creates an instance of IExtendedEmpyrionApi for the IRemoteEmpyrion client
+        /// </summary>
+        /// <param name="logger">The logger the interface will use</param>
+        /// <returns></returns>
+        IExtendedEmpyrionApi CreateExtendedApi(ILogger logger);
     }
 }

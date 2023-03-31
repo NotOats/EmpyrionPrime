@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EmpyrionPrime.Plugin\EmpyrionPrime.Plugin.csproj" />
     <ProjectReference Include="..\EmpyrionPrime.Schema\EmpyrionPrime.Schema.csproj" />
   </ItemGroup>
 

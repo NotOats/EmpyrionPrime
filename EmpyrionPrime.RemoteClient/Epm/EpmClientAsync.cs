@@ -1,4 +1,6 @@
 ﻿using Eleon.Modding;
+using EmpyrionPrime.Plugin;
+using EmpyrionPrime.RemoteClient.Epm.Api;
 using EmpyrionPrime.RemoteClient.Epm.Serializers;
 using EmpyrionPrime.RemoteClient.Streams;
 using Microsoft.Extensions.Logging;
@@ -85,6 +87,15 @@ namespace EmpyrionPrime.RemoteClient.Epm
         public void SendRequest(CmdId id, ushort sequenceNumber, object payload)
         {
             EnqueuePacket(new GameEvent(ClientId, id, sequenceNumber, payload));
+        }
+        public IBasicEmpyrionApi CreateBasicApi(ILogger logger)
+        {
+            return new EpmBasicEmpyrionApi(logger, this);
+        }
+
+        public IExtendedEmpyrionApi CreateExtendedApi(ILogger logger)
+        {
+            return new EpmExtendedEmpyrionApi(logger, this);
         }
 
         public void EnqueuePacket(GameEvent gameEvent) 
