@@ -19,7 +19,7 @@ namespace EmpyrionPrime.RemoteClient.Epm.Api
 
         public void SendChatMessage(MessageData messageData)
         {
-            Client.SendRequest((CmdId)GameEventId.Event_Chat, 0, messageData);
+            Client.SendRequest((CmdId)GameEventId.Request_Chat, 0, messageData);
         }
 
         protected override void HandleGameEvent(GameEvent gameEvent)
