@@ -1,7 +1,9 @@
 ﻿using Eleon.Modding;
+using EmpyrionPrime.Plugin;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EmpyrionPrime.ModFramework
@@ -9,19 +11,40 @@ namespace EmpyrionPrime.ModFramework
     public delegate Task AsyncGameEventHandler();
     public delegate Task AsyncGameEventHandler<TEventArgs>(TEventArgs e);
 
-    public partial class ApiEvents : IApiEvents
+    public partial class ApiEvents : IApiEvents, IDisposable
     {
         private readonly IDictionary<CmdId, Delegate> _eventHandlers = new Dictionary<CmdId, Delegate>();
         private readonly object _eventHandlersLock = new object();
 
         private readonly ILogger _logger;
+        private readonly IBasicEmpyrionApi _basicEmpyrionApi;
 
-        internal protected ApiEvents(ILogger logger)
+        private int _disposeCount = 0;
+
+        internal ApiEvents(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _basicEmpyrionApi = null;
         }
 
-        internal protected void HandleGameEvent(CmdId commandId, ushort sequenceNumber, object data)
+        public ApiEvents(ILogger logger, IBasicEmpyrionApi basicEmpyrionApi)
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _basicEmpyrionApi = basicEmpyrionApi ?? throw new ArgumentNullException(nameof(basicEmpyrionApi));
+
+            _basicEmpyrionApi.GameEvent += HandleGameEvent;
+        }
+
+        public void Dispose()
+        {
+            if (Interlocked.Increment(ref _disposeCount) != 1)
+                return;
+
+            if (_basicEmpyrionApi != null)
+                _basicEmpyrionApi.GameEvent -= HandleGameEvent;
+        }
+
+        internal void HandleGameEvent(CmdId commandId, ushort sequenceNumber, object data)
         {
             Delegate handler = null;
 

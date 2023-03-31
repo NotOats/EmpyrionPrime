@@ -13,7 +13,7 @@ namespace EmpyrionPrime.ModFramework
         private readonly ILogger _logger;
         private readonly IRequestBroker _requestBroker;
 
-        internal protected ApiRequests(ILogger logger, IRequestBroker requestBroker)
+        public ApiRequests(ILogger logger, IRequestBroker requestBroker)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _requestBroker = requestBroker ?? throw new ArgumentNullException(nameof(requestBroker));

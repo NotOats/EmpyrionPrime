@@ -3,11 +3,12 @@ using EmpyrionPrime.Plugin;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EmpyrionPrime.ModFramework.Api
 {
-    public class RequestBroker : IRequestBroker
+    public class RequestBroker : IRequestBroker, IDisposable
     {
         private readonly ILogger _logger;
         private readonly ModGameAPI _modGameApi;
@@ -20,26 +21,38 @@ namespace EmpyrionPrime.ModFramework.Api
         private readonly static int _sequenceStartNumber = 4096;
         private static int _nextSequenceNumber = new Random().Next(_sequenceStartNumber, ushort.MaxValue);
 
+        private int _disposeCount = 0;
+
         internal RequestBroker(ILogger logger, ModGameAPI modGameApi)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _modGameApi = modGameApi ?? throw new ArgumentNullException(nameof(modGameApi));
-
             _basicEmpyrionApi = null;
         }
 
-        protected RequestBroker(ILogger logger, IBasicEmpyrionApi basicEmpyrionApi)
+        public RequestBroker(ILogger logger, IBasicEmpyrionApi basicEmpyrionApi)
         {
             _logger = logger ?? throw new ArgumentException(nameof(logger));
             _basicEmpyrionApi = basicEmpyrionApi ?? throw new ArgumentNullException(nameof(basicEmpyrionApi));
-
             _modGameApi = null;
+
+            _basicEmpyrionApi.GameEvent += HandleGameEvent;
+        }
+
+        public void Dispose()
+        {
+            if (Interlocked.Increment(ref _disposeCount) != 1)
+                return;
+
+            if(_basicEmpyrionApi != null)
+                _basicEmpyrionApi.GameEvent -= HandleGameEvent;
         }
 
         public async Task<object> SendGameRequest(CmdId eventId, object data)
         {
-            var tcs = new TaskCompletionSource<object>();
+            if (_disposeCount > 0) throw new ObjectDisposedException(GetType().Name);
 
+            var tcs = new TaskCompletionSource<object>();
             ushort sequenceNumber;
 
             do
@@ -64,7 +77,7 @@ namespace EmpyrionPrime.ModFramework.Api
             return await tcs.Task;
         }
 
-        public void HandleGameEvent(CmdId eventId, ushort sequenceNumber, object data)
+        internal void HandleGameEvent(CmdId eventId, ushort sequenceNumber, object data)
         {
             // TODO: Validate sequence number against expected response. This will require storing the source eventId
             if (!_pendingRequests.TryRemove(sequenceNumber, out TaskCompletionSource<object> tcs))

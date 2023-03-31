@@ -1,9 +1,4 @@
-﻿using Eleon.Modding;
-using EmpyrionPrime.Launcher.Empyrion;
-using EmpyrionPrime.Launcher.Framework.Configuration;
-using EmpyrionPrime.ModFramework;
-using EmpyrionPrime.ModFramework.Api;
-using EmpyrionPrime.ModFramework.Configuration;
+﻿using EmpyrionPrime.Launcher.Framework;
 using EmpyrionPrime.Plugin;
 using EmpyrionPrime.RemoteClient;
 using Microsoft.Extensions.DependencyInjection;
@@ -105,47 +100,15 @@ internal class PluginHost : IPluginHost
             return PluginLogger.CreateMain(factory, pluginType);
         });
 
-        // Basic Empyrion Apis
+        // Empyrion Apis
         container.RegisterSingleton(_serviceProvider.GetRequiredService<IRemoteEmpyrion>);
-        container.RegisterSingleton<IEmpyrionApiFactory, EmpyrionApiFactory>();
-        container.RegisterSingleton(() =>
-        {
-            var logger = container.GetInstance<ILogger>();
-            var remote = container.GetInstance<IRemoteEmpyrion>();
-
-            return remote.CreateBasicApi(logger);
-        });
-        container.RegisterSingleton(() =>
-        {
-            var logger = container.GetInstance<ILogger>();
-            var remote = container.GetInstance<IRemoteEmpyrion>();
-
-            return remote.CreateExtendedApi(logger);
-        });
-        container.RegisterSingleton<ModGameAPI>(() =>
-        {
-            var logger = container.GetInstance<ILogger>();
-            var remote = container.GetInstance<IRemoteEmpyrion>();
-
-            return new RemoteModGameApi(logger, remote);
-        });
-
-        // Framework Apis
-        container.RegisterSingleton(() => CreatePluginInterface<IRequestBroker>(typeof(RemoteRequestBroker<>), pluginType, container));
-        container.RegisterSingleton(() => CreatePluginInterface<IApiEvents>(typeof(RemoteApiEvents<>), pluginType, container));
-        container.RegisterSingleton(() => CreatePluginInterface<IApiRequests>(typeof(RemoteApiRequests<>), pluginType, container));
-        container.RegisterSingleton(() => CreatePluginInterface<IPluginOptionsFactory>(typeof(PluginOptionsFactory<>), pluginType, container));
+        container.RegisterEmpyrionApis(pluginType);
+        container.RegisterFrameworkApis(pluginType);
 
 #if DEBUG
         container.Verify();
 #endif
 
         return container;
-    }
-
-    private static TInterface CreatePluginInterface<TInterface>(Type genericType, Type pluginType, Container container)
-    {
-        var type = genericType.MakeGenericType(pluginType);
-        return (TInterface)ActivatorUtilities.CreateInstance(container, type);
     }
 }
