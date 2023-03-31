@@ -13,8 +13,17 @@ public class EnvironmentExamplePlugin : IEmpyrionPlugin
     public Version Version => new("1.0");
     public ModInterface? ModInterface => null;
 
-    public EnvironmentExamplePlugin(ILogger logger, IEmpyrionEnvironment environment)
+    public EnvironmentExamplePlugin(ILogger logger, 
+        // Get the entire environment
+        IEmpyrionEnvironment  environment,
+        
+        // Use environment components directly
+        IEmpyrionServerConfig serverConfig,
+        IEmpyrionGameConfig   gameConfig)
     {
+        if (serverConfig == null) throw new ArgumentNullException(nameof(serverConfig));
+        if (gameConfig == null) throw new ArgumentNullException(nameof(gameConfig));
+
         LogProperties(logger, environment, nameof(IEmpyrionEnvironment));
         LogProperties(logger, environment.ServerConfig, nameof(IEmpyrionServerConfig));
         LogProperties(logger, environment.GameConfig, nameof(IEmpyrionGameConfig));
