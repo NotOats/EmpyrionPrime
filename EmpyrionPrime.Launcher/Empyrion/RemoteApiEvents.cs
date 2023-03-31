@@ -9,10 +9,10 @@ internal class RemoteApiEvents<TPlugin> : ApiEvents, IDisposable where TPlugin :
 {
     private readonly IBasicEmpyrionApi _empyrionApi;
 
-    internal RemoteApiEvents(ILoggerFactory loggerFactory, IEmpyrionApiFactory<TPlugin> apiFactory)
+    public RemoteApiEvents(ILoggerFactory loggerFactory, IBasicEmpyrionApi empyrionApi)
         : base(loggerFactory.CreateLogger<TPlugin, ApiEvents>())
     {
-        _empyrionApi = apiFactory.Create<IBasicEmpyrionApi>();
+        _empyrionApi = empyrionApi;
         _empyrionApi.GameEvent += HandleGameEvent;
     }
 

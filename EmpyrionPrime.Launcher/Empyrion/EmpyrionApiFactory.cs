@@ -1,60 +1,20 @@
-﻿using EmpyrionPrime.Launcher.Plugins;
-using EmpyrionPrime.ModFramework;
-using EmpyrionPrime.ModFramework.Api;
-using EmpyrionPrime.ModFramework.Extensions;
-using EmpyrionPrime.Plugin;
-using EmpyrionPrime.RemoteClient;
-using Microsoft.Extensions.Logging;
+﻿using EmpyrionPrime.Plugin;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EmpyrionPrime.Launcher.Empyrion
 {
-    internal class EmpyrionApiFactory<TPlugin> : IEmpyrionApiFactory<TPlugin> where TPlugin : IEmpyrionPlugin
+    internal class EmpyrionApiFactory : IEmpyrionApiFactory
     {
-        private readonly IReadOnlyDictionary<Type, Func<IEmpyrionApiFactory<TPlugin>, IEmpyrionApi>> _apiImplementations;
+        private readonly IServiceProvider _serviceProvider;
 
-        private readonly Dictionary<Type, IEmpyrionApi?> _apiCache = new();
-        private readonly object _apiCacheLock = new();
-        private readonly ILoggerFactory _loggerFactory;
-        private readonly IRemoteEmpyrion _remoteEmpyrion;
-
-        public EmpyrionApiFactory(ILoggerFactory loggerFactory, IRemoteEmpyrion remoteEmpyrion)
+        public EmpyrionApiFactory(IServiceProvider serviceProvider)
         {
-            _loggerFactory = loggerFactory;
-            _remoteEmpyrion = remoteEmpyrion;
-
-            // TODO: Dynamically load IEmpyrionApi interfaces from Plugin & ModFramework libs
-            _apiImplementations = new Dictionary<Type, Func<IEmpyrionApiFactory<TPlugin>, IEmpyrionApi>>
-            {
-                { typeof(IBasicEmpyrionApi),    apiFactory => { return _remoteEmpyrion.CreateBasicApi(PluginLogger.CreateMain(_loggerFactory, typeof(TPlugin))); } },
-                { typeof(IExtendedEmpyrionApi), apiFactory => { return _remoteEmpyrion.CreateExtendedApi(PluginLogger.CreateMain(_loggerFactory, typeof(TPlugin))); } },
-                { typeof(IRequestBroker),       apiFactory => { return new RemoteRequestBroker<TPlugin>(_loggerFactory, apiFactory); } },
-                { typeof(IApiEvents),           apiFactory => { return new RemoteApiEvents<TPlugin>(_loggerFactory, apiFactory); } },
-                { typeof(IApiRequests),         apiFactory => { return new RemoteApiRequests<TPlugin>(_loggerFactory, apiFactory); } }
-            };
+            _serviceProvider = serviceProvider;
         }
 
         public TEmpyrionApi? Create<TEmpyrionApi>() where TEmpyrionApi : class, IEmpyrionApi
         {
-            var type = typeof(TEmpyrionApi);
-
-            lock (_apiCacheLock)
-            {
-                if (!_apiCache.TryGetValue(type, out IEmpyrionApi? cached))
-                {
-                    var factory = _apiImplementations
-                        .Where(kvp => kvp.Key == type)
-                        .Select(kvp => kvp.Value)
-                        .FirstOrDefault();
-
-                    cached = factory != null ? factory(this) : null;
-                    _apiCache.Add(type, cached);
-                }
-
-                if (cached != null && cached is TEmpyrionApi api)
-                    return api;
-            }
-
-            return default;
+            return _serviceProvider.GetService<TEmpyrionApi>();
         }
     }
 }

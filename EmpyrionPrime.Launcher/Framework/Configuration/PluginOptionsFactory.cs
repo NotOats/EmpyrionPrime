@@ -7,7 +7,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace EmpyrionPrime.Launcher.Framework.Configuration;
 
-internal class PluginOptionsFactory<TPlugin> : IPluginOptionsFactory<TPlugin> where TPlugin : IEmpyrionPlugin
+internal class PluginOptionsFactory<TPlugin> : IPluginOptionsFactory where TPlugin : IEmpyrionPlugin
 {
     private readonly Dictionary<string, byte[]> _configFiles;
 
@@ -21,12 +21,12 @@ internal class PluginOptionsFactory<TPlugin> : IPluginOptionsFactory<TPlugin> wh
             ?? throw new Exception("Failed to find plugin directory");
 
         _configFiles = new[]
-            {
-                "appsettings.json",
-                $"appsettings.{env.EnvironmentName}.json"
-            }
-            .Select(file => Path.Combine(pluginDirectory, file))
-            .ToDictionary(file => file, file => File.Exists(file) ? ComputeHash(file) : new byte[20]);
+        {
+            "appsettings.json",
+            $"appsettings.{env.EnvironmentName}.json"
+        }
+        .Select(file => Path.Combine(pluginDirectory, file))
+        .ToDictionary(file => file, file => File.Exists(file) ? ComputeHash(file) : new byte[20]);
 
         var builder = new ConfigurationBuilder()
             .SetBasePath(pluginDirectory);

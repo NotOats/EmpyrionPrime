@@ -28,11 +28,13 @@ public class NoModInterface : IEmpyrionPlugin
     public ModInterface? ModInterface { get; } = null;
 
     public NoModInterface(
-        ILoggerFactory loggerFactory,
-        IEmpyrionApiFactory<NoModInterface> apiFactory,
-        IPluginOptionsFactory<NoModInterface> optionsFactory)
+        ILogger logger,
+        IEmpyrionApiFactory apiFactory,
+        IApiEvents apiEvents,
+        IPluginOptionsFactory optionsFactory,
+        ModGameAPI modGameApi)
     {
-        _logger = loggerFactory.CreateLogger<NoModInterface>("Main");
+        _logger = logger;
         _empyrionGameApi = apiFactory.Create<IExtendedEmpyrionApi>();
         _apiRequests = apiFactory.Create<IApiRequests>();
 
@@ -44,12 +46,10 @@ public class NoModInterface : IEmpyrionPlugin
         _logger.LogInformation("{PluginType} loaded", Name);
 
         // Console_Write is still available, along with the other ModGameAPI methods
-        // TODO: ModGameApi DI injection via SimpleInjector's RegisterConditional
-        //_empyrionGameApi.ModGameAPI.Console_Write("Using ModGameApi outside of ModInterface!");
+        modGameApi.Console_Write("Using ModGameApi outside of ModInterface!");
 
 
         // Access events and make requests via interface
-        var apiEvents = apiFactory.Create<IApiEvents>();
         apiEvents.PlayerConnected += async id =>
         {
             var playerInfo = await _apiRequests.PlayerInfo(id);

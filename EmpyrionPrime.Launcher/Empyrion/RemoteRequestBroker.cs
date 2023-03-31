@@ -9,10 +9,10 @@ internal class RemoteRequestBroker<TPlugin> : RequestBroker , IDisposable where 
 {
     private readonly IBasicEmpyrionApi _empyrionApi;
 
-    internal RemoteRequestBroker(ILoggerFactory loggerFactory, IEmpyrionApiFactory<TPlugin> apiFactory)
-        : base(loggerFactory.CreateLogger<TPlugin, RequestBroker>(), apiFactory.Create<IBasicEmpyrionApi>())
+    public RemoteRequestBroker(ILoggerFactory loggerFactory, IBasicEmpyrionApi empyrionApi)
+        : base(loggerFactory.CreateLogger<TPlugin, RequestBroker>(), empyrionApi)
     {
-        _empyrionApi = apiFactory.Create<IBasicEmpyrionApi>();
+        _empyrionApi = empyrionApi;
         _empyrionApi.GameEvent += HandleGameEvent;
     }
 

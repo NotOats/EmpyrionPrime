@@ -8,8 +8,8 @@ namespace EmpyrionPrime.Launcher.Empyrion;
 
 internal class RemoteApiRequests<TPlugin> : ApiRequests where TPlugin : IEmpyrionPlugin
 {
-    public RemoteApiRequests(ILoggerFactory loggerFactory, IEmpyrionApiFactory<TPlugin> apiFactory)
-    : base(loggerFactory.CreateLogger<TPlugin, ApiRequests>(), apiFactory.Create<IRequestBroker>())
+    public RemoteApiRequests(ILoggerFactory loggerFactory, IRequestBroker requestBroker)
+    : base(loggerFactory.CreateLogger<TPlugin, ApiRequests>(), requestBroker)
     {
     }
 }

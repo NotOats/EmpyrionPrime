@@ -1,9 +1,5 @@
 ﻿using EmpyrionPrime.Launcher;
-using EmpyrionPrime.Launcher.Empyrion;
-using EmpyrionPrime.Launcher.Framework.Configuration;
 using EmpyrionPrime.Launcher.Plugins;
-using EmpyrionPrime.ModFramework.Configuration;
-using EmpyrionPrime.Plugin;
 using EmpyrionPrime.RemoteClient;
 using EmpyrionPrime.RemoteClient.Epm;
 using Microsoft.Extensions.Configuration;
@@ -105,8 +101,6 @@ static void AddInstancesToContainer(Container container, IConfigurationRoot conf
         return client;
     });
 
-    container.RegisterSingleton(typeof(IEmpyrionApiFactory<>), typeof(EmpyrionApiFactory<>));
-    container.RegisterSingleton(typeof(IPluginOptionsFactory<>), typeof(PluginOptionsFactory<>));
     container.RegisterSingleton<IPluginManager, PluginManager>();
 
 #if DEBUG
