@@ -1,6 +1,4 @@
-﻿using Eleon.Modding;
-using EmpyrionPrime.Launcher.Plugins;
-using EmpyrionPrime.Plugin;
+﻿using EmpyrionPrime.Launcher.Plugins;
 using EmpyrionPrime.RemoteClient;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -10,26 +8,25 @@ namespace EmpyrionPrime.Launcher;
 
 internal class ModInterfaceBroker : BackgroundService
 {
+    private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger<ModInterfaceBroker> _logger;
     private readonly IPluginManager _pluginManager;
     private readonly IRemoteEmpyrion _remoteEmpyrion;
-    private readonly IServiceProvider _serviceProvider;
 
     private readonly int _targetUpdateTps;
 
     private bool _disposed = false;
 
     public ModInterfaceBroker(
-        ILogger<ModInterfaceBroker> logger,
+        ILoggerFactory loggerFactory,
         IOptions<PluginsSettings> settings,
         IPluginManager pluginManager, 
-        IRemoteEmpyrion remoteEmpyrion,
-        IServiceProvider serviceProvider)
+        IRemoteEmpyrion remoteEmpyrion)
     {
-        _logger = logger;
+        _loggerFactory = loggerFactory;
+        _logger = _loggerFactory.CreateLogger<ModInterfaceBroker>();
         _pluginManager = pluginManager;
         _remoteEmpyrion = remoteEmpyrion;
-        _serviceProvider = serviceProvider;
         _targetUpdateTps = settings.Value.GameUpdateTps;
 
         // Start each plugin
@@ -38,17 +35,10 @@ internal class ModInterfaceBroker : BackgroundService
             if (plugin.ModInterface == null)
                 return;
 
-            var apiFactoryType = typeof(IEmpyrionApiFactory<>).MakeGenericType(plugin.GetType());
-            var apiFactory = _serviceProvider.GetService(apiFactoryType)
-                ?? throw new Exception($"Failed to load IEmpyrionApiFactory<> for {plugin.GetType()}");
+            var logger = PluginLogger.CreateMain(_loggerFactory, plugin.GetType());
+            var modGameApi = new RemoteModGameApi(logger, _remoteEmpyrion);
 
-            var create = apiFactoryType.GetMethod("Create")?.MakeGenericMethod(typeof(IBasicEmpyrionApi))
-                ?? throw new Exception($"Failed to make generic IEmpyrionApiFactory<>.Create<IBasicEmpyrionApi> for type {plugin.GetType()}");
-
-            var gameApi = create.Invoke(apiFactory, null) as IBasicEmpyrionApi
-                ?? throw new Exception($"Failed to load IBasicEmpyrionApi for type {plugin.GetType()}");
-
-            plugin.ModInterface?.Game_Start(gameApi.ModGameAPI);
+            plugin.ModInterface?.Game_Start(modGameApi);
         });
 
         _remoteEmpyrion.GameEventHandler += PropagateGameEvent;
@@ -98,7 +88,7 @@ internal class ModInterfaceBroker : BackgroundService
     {
         _pluginManager.ExecuteOnEachPlugin(plugin =>
         {
-            var eleonEvent = (CmdId)gameEvent.Id;
+            var eleonEvent = gameEvent.Id;
 
             plugin.ModInterface?.Game_Event(eleonEvent, gameEvent.SequenceNumber, gameEvent.Payload);
         });

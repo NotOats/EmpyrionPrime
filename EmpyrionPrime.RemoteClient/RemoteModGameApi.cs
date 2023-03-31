@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace EmpyrionPrime.RemoteClient.Epm.Api
+namespace EmpyrionPrime.RemoteClient
 {
-    internal class RemoteModGameApi : ModGameAPI
+    public class RemoteModGameApi : ModGameAPI
     {
         private readonly ILogger _logger;
         private readonly IRemoteEmpyrion _remoteEmpyrion;

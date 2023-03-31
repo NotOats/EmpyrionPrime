@@ -44,7 +44,8 @@ public class NoModInterface : IEmpyrionPlugin
         _logger.LogInformation("{PluginType} loaded", Name);
 
         // Console_Write is still available, along with the other ModGameAPI methods
-        _empyrionGameApi.ModGameAPI.Console_Write("Using ModGameApi outside of ModInterface!");
+        // TODO: ModGameApi DI injection via SimpleInjector's RegisterConditional
+        //_empyrionGameApi.ModGameAPI.Console_Write("Using ModGameApi outside of ModInterface!");
 
 
         // Access events and make requests via interface

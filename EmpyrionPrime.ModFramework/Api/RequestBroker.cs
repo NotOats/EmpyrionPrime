@@ -1,4 +1,5 @@
 ﻿using Eleon.Modding;
+using EmpyrionPrime.Plugin;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
@@ -9,7 +10,9 @@ namespace EmpyrionPrime.ModFramework.Api
     public class RequestBroker : IRequestBroker
     {
         private readonly ILogger _logger;
-        private readonly ModGameAPI _gameApi;
+        private readonly ModGameAPI _modGameApi;
+        private readonly IBasicEmpyrionApi _basicEmpyrionApi;
+
         private readonly ConcurrentDictionary<ushort, TaskCompletionSource<object>> _pendingRequests =
             new ConcurrentDictionary<ushort, TaskCompletionSource<object>>();
 
@@ -17,10 +20,20 @@ namespace EmpyrionPrime.ModFramework.Api
         private readonly static int _sequenceStartNumber = 4096;
         private static int _nextSequenceNumber = new Random().Next(_sequenceStartNumber, ushort.MaxValue);
 
-        internal protected RequestBroker(ILogger logger, ModGameAPI gameApi)
+        internal RequestBroker(ILogger logger, ModGameAPI modGameApi)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _gameApi = gameApi ?? throw new ArgumentNullException(nameof(gameApi));
+            _modGameApi = modGameApi ?? throw new ArgumentNullException(nameof(modGameApi));
+
+            _basicEmpyrionApi = null;
+        }
+
+        protected RequestBroker(ILogger logger, IBasicEmpyrionApi basicEmpyrionApi)
+        {
+            _logger = logger ?? throw new ArgumentException(nameof(logger));
+            _basicEmpyrionApi = basicEmpyrionApi ?? throw new ArgumentNullException(nameof(basicEmpyrionApi));
+
+            _modGameApi = null;
         }
 
         public async Task<object> SendGameRequest(CmdId eventId, object data)
@@ -43,7 +56,10 @@ namespace EmpyrionPrime.ModFramework.Api
             _logger.LogDebug("TCS created for {eventId}, seqNr: {sequenceNumber}, data: {dataType}",
                 eventId, sequenceNumber, data?.GetType());
 
-            _gameApi.Game_Request(eventId, sequenceNumber, data);
+            if(_basicEmpyrionApi != null)
+                _basicEmpyrionApi.SendEvent(eventId, sequenceNumber, data);
+            else
+                _modGameApi.Game_Request(eventId, sequenceNumber, data);
 
             return await tcs.Task;
         }

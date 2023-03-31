@@ -12,8 +12,6 @@ namespace EmpyrionPrime.RemoteClient.Epm.Api
 
         protected IRemoteEmpyrion Client { get; }
 
-        public ModGameAPI ModGameAPI { get; }
-
         public event GameEventHandler GameEvent;
 
         public EpmBasicEmpyrionApi(ILogger logger, IRemoteEmpyrion client)
@@ -22,8 +20,6 @@ namespace EmpyrionPrime.RemoteClient.Epm.Api
             Client = client ?? throw new ArgumentNullException(nameof(client));
 
             Client.GameEventHandler += HandleGameEvent;
-
-            ModGameAPI = new RemoteModGameApi(logger, client);
         }
 
         public void Dispose() => Dispose(true);
@@ -34,6 +30,11 @@ namespace EmpyrionPrime.RemoteClient.Epm.Api
                 return;
 
             Client.GameEventHandler -= HandleGameEvent;
+        }
+
+        public void SendEvent(CmdId id, ushort sequenceNumber, object data)
+        {
+            Client.SendRequest(id, sequenceNumber, data);
         }
 
         protected virtual void HandleGameEvent(GameEvent gameEvent)

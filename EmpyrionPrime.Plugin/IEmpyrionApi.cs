@@ -10,9 +10,9 @@ namespace EmpyrionPrime.Plugin
 
     public interface IBasicEmpyrionApi : IEmpyrionApi
     {
-        ModGameAPI ModGameAPI { get; }
-
         event GameEventHandler GameEvent;
+
+        void SendEvent(CmdId id, ushort sequenceNumber, object data);
     }
 
     public interface IExtendedEmpyrionApi : IBasicEmpyrionApi
