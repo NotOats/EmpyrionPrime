@@ -62,10 +62,20 @@ namespace EmpyrionPrime.RemoteClient.Epm
             _shutdownCts.Cancel();
 
             // Save Accept & Listen tasks, task.Wait() until they're finished. Maybe use IAsyncDisposable?
-            var finished = Task.WaitAll(new[] { _readerTask, _writerTask }, 10 * 1000);
-            if(!finished)
+            try
             {
-                _logger.LogError("Reader/Writer tasks failed to stop in time.");
+                var finished = Task.WaitAll(new[] { _readerTask, _writerTask }, 10 * 1000);
+                if (!finished)
+                {
+                    _logger.LogError("Reader/Writer tasks failed to stop in time.");
+                }
+            }
+            catch(AggregateException ex)
+            {
+                if (ex.InnerException.GetType() == typeof(TaskCanceledException))
+                    return;
+
+                throw;
             }
 
             CloseConnection();
@@ -136,6 +146,10 @@ namespace EmpyrionPrime.RemoteClient.Epm
                         gameEvent = new GameEvent(clientId, (CmdId)cmdId, seqNumber, null);
                     }
                 }
+                catch(OperationCanceledException)
+                {
+                    // Eat OperationCanceledException, this is from the CancellationTokenSource being cancelled
+                }
                 catch (IOException ex)
                 {
                     _logger.LogWarning(ex, "Connection closed while reading");
@@ -148,7 +162,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning(ex, "Error when reading to connection");
+                    _logger.LogWarning(ex, "Error when reading from connection");
                     CloseConnection();
                 }
 
@@ -182,7 +196,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
                         if (payload != null)
                             await _writer.WriteAsync(payload, token);
 
-                        await _writer.FlushAsync();
+                        await _writer.FlushAsync(token);
                     }
                     catch(IOException ex)
                     {

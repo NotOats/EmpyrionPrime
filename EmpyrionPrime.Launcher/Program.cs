@@ -77,8 +77,6 @@ finally
 
 static void AddInstancesToContainer(Container container, IConfigurationRoot configuration)
 {
-    // TODO: Change ModInterfaceBroker to not need this
-    // Register IServiceProvider for use in ModInterfaceBroker
     container.RegisterInstance<IServiceProvider>(container);
 
     // Directly register settings which SimpleInjector prefers to IOptions<T>
@@ -91,7 +89,8 @@ static void AddInstancesToContainer(Container container, IConfigurationRoot conf
         var logger = container.GetInstance<ILogger<EpmClient>>();
         var settings = container.GetInstance<EmpyrionSettings>();
 
-        var client = new EpmClient(logger, settings.EpmAddress, settings.EpmPort, settings.EpmClientId);
+        //var client = new EpmClient(logger, settings.EpmAddress, settings.EpmPort, settings.EpmClientId);
+        var client = new EpmClientAsync(logger, settings.EpmAddress, settings.EpmPort, settings.EpmClientId);
         client.Start();
 
         return client;
