@@ -22,20 +22,11 @@ namespace EmpyrionPrime.Launcher.Empyrion
             _loggerFactory = loggerFactory;
             _remoteEmpyrion = remoteEmpyrion;
 
-            ILogger CreatePluginLogger()
-            {
-                var type = typeof(TPlugin);
-                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ModInterfaceWrapper<>))
-                    type = type.GetGenericArguments()[0];
-
-                return _loggerFactory.CreateLogger(type.Name, "Main");
-            }
-
             // TODO: Dynamically load IEmpyrionApi interfaces from Plugin & ModFramework libs
             _apiImplementations = new Dictionary<Type, Func<IEmpyrionApiFactory<TPlugin>, IEmpyrionApi>>
             {
-                { typeof(IBasicEmpyrionApi),    apiFactory => { return _remoteEmpyrion.CreateBasicApi(CreatePluginLogger()); } },
-                { typeof(IExtendedEmpyrionApi), apiFactory => { return _remoteEmpyrion.CreateExtendedApi(CreatePluginLogger()); } },
+                { typeof(IBasicEmpyrionApi),    apiFactory => { return _remoteEmpyrion.CreateBasicApi(PluginLogger.CreateMain(_loggerFactory, typeof(TPlugin))); } },
+                { typeof(IExtendedEmpyrionApi), apiFactory => { return _remoteEmpyrion.CreateExtendedApi(PluginLogger.CreateMain(_loggerFactory, typeof(TPlugin))); } },
                 { typeof(IRequestBroker),       apiFactory => { return new RemoteRequestBroker<TPlugin>(_loggerFactory, apiFactory); } },
                 { typeof(IApiEvents),           apiFactory => { return new RemoteApiEvents<TPlugin>(_loggerFactory, apiFactory); } },
                 { typeof(IApiRequests),         apiFactory => { return new RemoteApiRequests<TPlugin>(_loggerFactory, apiFactory); } }
