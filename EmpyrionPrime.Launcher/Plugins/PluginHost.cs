@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SimpleInjector;
-using System;
 
 namespace EmpyrionPrime.Launcher.Plugins;
 
@@ -18,7 +17,6 @@ internal interface IPluginHost : IDisposable
 {
     public string AssemblyName { get; }
     public IReadOnlyCollection<WeakReference<IEmpyrionPlugin>> Plugins { get; }
-
 }
 
 internal class PluginHost : IPluginHost
@@ -30,7 +28,7 @@ internal class PluginHost : IPluginHost
     private readonly Dictionary<IEmpyrionPlugin, Container> _plugins = new();
     private readonly PluginLoadContext _context;
 
-    private bool _disposed = false;
+    private int _disposeCount = 0;
 
     public string AssemblyName => Path.GetFileNameWithoutExtension(_assemblyPath);
 
@@ -47,7 +45,7 @@ internal class PluginHost : IPluginHost
         if (!File.Exists(assemblyPath))
             throw new FileNotFoundException("Invalid assembly path", assemblyPath);
 
-        _serviceProvider = provider ?? throw new ArgumentNullException(nameof(provider)); ;
+        _serviceProvider = provider ?? throw new ArgumentNullException(nameof(provider));
         _assemblyPath = assemblyPath;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _context = new PluginLoadContext(_assemblyPath);
@@ -57,20 +55,18 @@ internal class PluginHost : IPluginHost
 
     public void Dispose()
     {
-        if(!_disposed)
+        if (Interlocked.Increment(ref _disposeCount) != 1)
+            return;
+
+        foreach (var kvp in _plugins)
         {
-            foreach(var kvp in _plugins)
-            {
-                if (kvp.Key is IDisposable disposable)
-                    disposable.Dispose();
+            if (kvp.Key is IDisposable disposable)
+                disposable.Dispose();
 
-                kvp.Value.Dispose();
-            }
-
-            _context.Unload();
-
-            _disposed = true;
+            kvp.Value.Dispose();
         }
+
+        _context.Unload();
     }
 
     private void LoadPlugins()
@@ -79,7 +75,6 @@ internal class PluginHost : IPluginHost
         foreach (var pluginType in PluginFinder.GetPluginTypes(assembly))
         {
             var container = CreateContainer(pluginType);
-
             var instance = (IEmpyrionPlugin)ActivatorUtilities.CreateInstance(container, pluginType);
 
             if (instance == null)
@@ -112,6 +107,7 @@ internal class PluginHost : IPluginHost
 
         // Basic Empyrion Apis
         container.RegisterSingleton(_serviceProvider.GetRequiredService<IRemoteEmpyrion>);
+        container.RegisterSingleton<IEmpyrionApiFactory, EmpyrionApiFactory>();
         container.RegisterSingleton(() =>
         {
             var logger = container.GetInstance<ILogger>();
@@ -138,8 +134,6 @@ internal class PluginHost : IPluginHost
         container.RegisterSingleton(() => CreatePluginInterface<IRequestBroker>(typeof(RemoteRequestBroker<>), pluginType, container));
         container.RegisterSingleton(() => CreatePluginInterface<IApiEvents>(typeof(RemoteApiEvents<>), pluginType, container));
         container.RegisterSingleton(() => CreatePluginInterface<IApiRequests>(typeof(RemoteApiRequests<>), pluginType, container));
-
-        container.RegisterSingleton<IEmpyrionApiFactory, EmpyrionApiFactory>();
         container.RegisterSingleton(() => CreatePluginInterface<IPluginOptionsFactory>(typeof(PluginOptionsFactory<>), pluginType, container));
 
 #if DEBUG
