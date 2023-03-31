@@ -35,10 +35,6 @@ var builder = Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((context, services) =>
     {
-        // TODO: Use SimpleInjector recommended configuration register -> Change all IOptions<T> to just T
-        services.Configure<EmpyrionSettings>(context.Configuration.GetSection("Empyrion"));
-        services.Configure<PluginsSettings>(context.Configuration.GetSection("Plugins"));
-
         services.AddSimpleInjector(container, options =>
         {
             options.AddLogging();

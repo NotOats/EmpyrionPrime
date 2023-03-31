@@ -19,7 +19,7 @@ internal class ModInterfaceBroker : BackgroundService
 
     public ModInterfaceBroker(
         ILoggerFactory loggerFactory,
-        IOptions<PluginsSettings> settings,
+        PluginsSettings settings,
         IPluginManager pluginManager, 
         IRemoteEmpyrion remoteEmpyrion)
     {
@@ -27,7 +27,7 @@ internal class ModInterfaceBroker : BackgroundService
         _logger = _loggerFactory.CreateLogger<ModInterfaceBroker>();
         _pluginManager = pluginManager;
         _remoteEmpyrion = remoteEmpyrion;
-        _targetUpdateTps = settings.Value.GameUpdateTps;
+        _targetUpdateTps = settings.GameUpdateTps;
 
         // Start each plugin
         _pluginManager.ExecuteOnEachPlugin(plugin =>
