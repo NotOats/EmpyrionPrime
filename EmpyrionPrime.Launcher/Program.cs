@@ -110,7 +110,8 @@ static void RegisterSettings<T>(Container container, IConfigurationRoot configur
     var instance = configuration.GetSection(section).Get<T>() 
         ?? throw new Exception($"Failed to create {typeof(T).Name} from '{section}'");
 
-    // TODO: Configuration validation?
+    if (instance is ISettingsValidator validator)
+        validator.Validate();
 
     container.RegisterInstance<T>(instance);
 }
