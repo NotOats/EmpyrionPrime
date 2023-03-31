@@ -2,7 +2,6 @@
 using EmpyrionPrime.RemoteClient;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace EmpyrionPrime.Launcher;
 
@@ -15,7 +14,7 @@ internal class ModInterfaceBroker : BackgroundService
 
     private readonly int _targetUpdateTps;
 
-    private bool _disposed = false;
+    private int _disposeCount = 0;
 
     public ModInterfaceBroker(
         ILoggerFactory loggerFactory,
@@ -46,7 +45,7 @@ internal class ModInterfaceBroker : BackgroundService
 
     public override void Dispose()
     {
-        if (_disposed)
+        if (Interlocked.Increment(ref _disposeCount) != 1)
             return;
 
         // Calls the cancellation token
@@ -58,8 +57,6 @@ internal class ModInterfaceBroker : BackgroundService
         {
             plugin.ModInterface?.Game_Exit();
         });
-
-        _disposed = true;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
