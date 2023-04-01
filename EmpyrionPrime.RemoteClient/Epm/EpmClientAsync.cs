@@ -1,5 +1,5 @@
 ﻿using Eleon.Modding;
-using EmpyrionPrime.Plugin;
+using EmpyrionPrime.Plugin.Api;
 using EmpyrionPrime.RemoteClient.Epm.Api;
 using EmpyrionPrime.RemoteClient.Epm.Serializers;
 using EmpyrionPrime.RemoteClient.Streams;

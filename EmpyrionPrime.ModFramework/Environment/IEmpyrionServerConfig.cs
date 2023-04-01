@@ -26,7 +26,7 @@
         int MaxPlayers { get; }
 
         /// <summary>
-        /// Number of idle playefield servers held in reserve
+        /// Number of idle playfield servers held in reserve
         /// Default: 1
         /// </summary>
         int ReservePlayFields { get; }
@@ -46,7 +46,7 @@
 
         /// <summary>
         /// How often, in real time hours, to stop all playfield servers
-        /// Note: Players will recieve a warning message before this happens
+        /// Note: Players will receive a warning message before this happens
         /// </summary>
         int StopPeriod { get; }
 
@@ -165,7 +165,7 @@
         int PlayerLoginParallelCount { get; }
 
         /// <summary>
-        /// A comma seperates list of Steam Ids for preferred players, this will give them a better position in the login queue.
+        /// A comma separates list of Steam Ids for preferred players, this will give them a better position in the login queue.
         /// Note: Format example "123456789,123456788,123456787"
         /// </summary>
         string PlayerLoginVipNames { get; }

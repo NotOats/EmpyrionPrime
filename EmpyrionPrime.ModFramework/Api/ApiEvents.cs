@@ -1,5 +1,5 @@
 ﻿using Eleon.Modding;
-using EmpyrionPrime.Plugin;
+using EmpyrionPrime.Plugin.Api;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -8,9 +8,23 @@ using System.Threading.Tasks;
 
 namespace EmpyrionPrime.ModFramework
 {
+    /// <summary>
+    /// Asynchronous game event handler with no event arguments
+    /// </summary>
+    /// <returns>Void task</returns>
     public delegate Task AsyncGameEventHandler();
+
+    /// <summary>
+    /// Asynchronous game event handler with the specified TEventArgs
+    /// </summary>
+    /// <typeparam name="TEventArgs">Event arguments type</typeparam>
+    /// <param name="e">The event arguments</param>
+    /// <returns>Void task</returns>
     public delegate Task AsyncGameEventHandler<TEventArgs>(TEventArgs e);
 
+    /// <summary>
+    /// Interface for subscribing to Empyrion Api Events
+    /// </summary>
     public partial class ApiEvents : IApiEvents, IDisposable
     {
         private readonly IDictionary<CmdId, Delegate> _eventHandlers = new Dictionary<CmdId, Delegate>();

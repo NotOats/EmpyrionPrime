@@ -1,5 +1,5 @@
 ﻿using Eleon.Modding;
-using EmpyrionPrime.Plugin;
+using EmpyrionPrime.Plugin.Api;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace EmpyrionPrime.ModFramework.Api
 {
+    /// <summary>
+    /// Asynchronously handles sending and receiving events from an Empyrion server.
+    /// </summary>
     public class RequestBroker : IRequestBroker, IDisposable
     {
         private readonly ILogger _logger;
@@ -30,9 +33,15 @@ namespace EmpyrionPrime.ModFramework.Api
             _basicEmpyrionApi = null;
         }
 
+        /// <summary>
+        /// Creates a RequestBroker that automatically handles reading events from the specified IBasicEmpyrionApi
+        /// </summary>
+        /// <param name="logger">The logger to use</param>
+        /// <param name="basicEmpyrionApi">The empyrion api to use</param>
+        /// <exception cref="ArgumentNullException">Thrown if logger or basicEmpyrionApi is null</exception>
         public RequestBroker(ILogger logger, IBasicEmpyrionApi basicEmpyrionApi)
         {
-            _logger = logger ?? throw new ArgumentException(nameof(logger));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _basicEmpyrionApi = basicEmpyrionApi ?? throw new ArgumentNullException(nameof(basicEmpyrionApi));
             _modGameApi = null;
 
@@ -48,6 +57,14 @@ namespace EmpyrionPrime.ModFramework.Api
                 _basicEmpyrionApi.GameEvent -= HandleGameEvent;
         }
 
+        /// <summary>
+        /// Send a game request with attached data and returns a TaskCompletionSource that will complete
+        /// when the corresponding event is returned from the server.
+        /// </summary>
+        /// <param name="eventId">The event Id</param>
+        /// <param name="data">The event data</param>
+        /// <returns>Task that will complete with the corresponding event from the server</returns>
+        /// <exception cref="ObjectDisposedException">Thrown is the class is disposed</exception>
         public async Task<object> SendGameRequest(CmdId eventId, object data)
         {
             if (_disposeCount > 0) throw new ObjectDisposedException(GetType().Name);

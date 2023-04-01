@@ -3,6 +3,9 @@ using System;
 
 namespace EmpyrionPrime.ModFramework
 {
+    /// <summary>
+    /// Interface for subscribing to Empyrion Api Events
+    /// </summary>
     public partial class ApiEvents
     {
         /// <summary>

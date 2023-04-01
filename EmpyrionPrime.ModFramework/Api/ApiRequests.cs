@@ -6,6 +6,9 @@ using System.Diagnostics;
 
 namespace EmpyrionPrime.ModFramework
 {
+    /// <summary>
+    /// Interface for asynchronous Empyrion Api Requests
+    /// </summary>
     public partial class ApiRequests : IApiRequests
     {
         private readonly static TimeSpan DefaultTimeout = new TimeSpan(0, 0, 0, 10);

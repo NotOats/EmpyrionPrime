@@ -23,7 +23,7 @@
 
         /// <summary>
         /// The name of The custom scenario in the "Content\Scenarios" folder.
-        /// Default: Default Multiplayer
+        /// Default: "Default Multiplayer"
         /// </summary>
         string CustomScenario { get; }
     }

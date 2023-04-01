@@ -1,6 +1,7 @@
 ﻿using Eleon;
 using Eleon.Modding;
 using EmpyrionPrime.Plugin;
+using EmpyrionPrime.Plugin.Api;
 using Microsoft.Extensions.Logging;
 using System;
 

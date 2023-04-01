@@ -14,6 +14,9 @@ using System.Threading.Tasks;
 
 namespace EmpyrionPrime.ModFramework
 {
+    /// <summary>
+    /// Interface for asynchronous Empyrion Api Requests
+    /// </summary>
     public partial class ApiRequests
     {
 <# 
@@ -31,11 +34,20 @@ foreach(var item in ApiSchema.ApiRequests)
         /// Response: <#= item.ResponseType != null ? item.ResponseType : "null" #>
         /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#<#= item.CommandId #>
         /// </summary>
+        /// <returns>Task wrapping a <#= item.ResponseType != null ? item.ResponseType : "null" #></returns>
         public <#= methodReturn #> <#= methodName #>(<#= argumentSignature #>)
         {
             return <#= methodName #>(<#= argumentType != null ? "arg, " : "" #>DefaultTimeout);
         }
 
+        /// <summary>
+        /// Command:  CmdId.<#= item.CommandId #>
+        /// Argument: <#= item.ArgumentType != null ? item.ArgumentType : "null" #>
+        /// Response: <#= item.ResponseType != null ? item.ResponseType : "null" #>
+        /// Docs: https://empyrion.fandom.com/wiki/Game_API_CmdId#<#= item.CommandId #>
+        /// </summary>
+        /// <param name="timeout">Timeout after which the task will cancel</param>
+        /// <returns>Task wrapping a <#= item.ResponseType != null ? item.ResponseType : "null" #></returns>
         public async <#= methodReturn #> <#= methodName #>(<#= argumentSignature.Length != 0 ? argumentSignature + ", " : argumentSignature #>TimeSpan timeout)
         {
 <#
@@ -62,7 +74,6 @@ else
 } 
 #>
         }
-
 <# 
 } 
 #>

@@ -3,6 +3,9 @@ using EmpyrionPrime.Plugin;
 
 namespace EmpyrionPrime.ModFramework
 {
+    /// <summary>
+    /// Interface for subscribing to Empyrion Api Events
+    /// </summary>
     public interface IApiEvents : IEmpyrionApi
     {
         /// <summary>
