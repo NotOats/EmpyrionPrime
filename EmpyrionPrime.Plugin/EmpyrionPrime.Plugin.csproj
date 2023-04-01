@@ -2,6 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>NotOats</Authors>
+    <Description>Basic interfaces for EmpyrionPrime plugins</Description>
+    <PackageProjectUrl>https://github.com/NotOats/EmpyrionPrime</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/NotOats/EmpyrionPrime</RepositoryUrl>
+    <PackageTags>Empyrion</PackageTags>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,6 +20,13 @@
     <Reference Include="ModApi">
       <HintPath>..\dependencies\ModApi.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
