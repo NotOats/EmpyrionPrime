@@ -62,6 +62,8 @@ namespace EmpyrionPrime.Launcher.Framework
                 ?? throw new Exception("Failed to load ServerConfig from EmpyrionEnvironment"));
             container.RegisterSingleton(() => container.GetInstance<IEmpyrionEnvironment>().GameConfig
                 ?? throw new Exception("Failed to load GameConfig from EmpyrionEnvironment"));
+            container.RegisterSingleton(() => container.GetInstance<IEmpyrionEnvironment>().AdminConfig
+                ?? throw new Exception("Failed to load AdminConfig from EmpyrionEnvironment"));
         }
 
         private static void RegisterGameApiGeneric<TInterface>(this Container container, Type genericType, Type pluginType)

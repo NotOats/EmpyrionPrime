@@ -19,14 +19,22 @@ public class EnvironmentExamplePlugin : IEmpyrionPlugin
         
         // Use environment components directly
         IEmpyrionServerConfig serverConfig,
-        IEmpyrionGameConfig   gameConfig)
+        IEmpyrionGameConfig   gameConfig,
+        IEmpyrionAdminConfig  adminConfig)
     {
         if (serverConfig == null) throw new ArgumentNullException(nameof(serverConfig));
         if (gameConfig == null) throw new ArgumentNullException(nameof(gameConfig));
+        if (adminConfig == null) throw new ArgumentNullException(nameof(adminConfig));
 
         LogProperties(logger, environment, nameof(IEmpyrionEnvironment));
         LogProperties(logger, environment.ServerConfig, nameof(IEmpyrionServerConfig));
         LogProperties(logger, environment.GameConfig, nameof(IEmpyrionGameConfig));
+
+        foreach(var kvp in adminConfig.Permissions)
+            logger.LogDebug("Elevated - User: {User}, Level: {PermissionLevel}", kvp.Key, kvp.Value);
+
+        foreach (var kvp in adminConfig.BannedUsers)
+            logger.LogDebug("Banned   - User: {User}, Until: {UnbanDate}", kvp.Key, kvp.Value);
     }
 
     private static void LogProperties(ILogger logger, object obj, string? objName = null)

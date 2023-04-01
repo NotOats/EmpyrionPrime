@@ -3,7 +3,7 @@ using YamlDotNet.Serialization;
 
 namespace EmpyrionPrime.Launcher.Framework.Environment
 {
-    internal class EmpyrionDedicatedConfigFile
+    internal static class EmpyrionDedicatedConfigFile
     {
         public static IEmpyrionServerConfig ReadServerConfig(string file)
         {

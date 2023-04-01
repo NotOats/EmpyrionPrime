@@ -21,6 +21,8 @@ namespace EmpyrionPrime.Launcher.Framework.Environment
 
         public IEmpyrionGameConfig GameConfig { get; }
 
+        public IEmpyrionAdminConfig AdminConfig { get; }
+
         public EmpyrionEnvironment(EmpyrionSettings settings)
         {
             ServerDirectory = settings.ServerPath ?? throw new ArgumentNullException(nameof(settings), "ServerPath is null");
@@ -46,6 +48,9 @@ namespace EmpyrionPrime.Launcher.Framework.Environment
 
             CurrentSaveGameDirectory = Path.Combine(BaseSaveGameDirectory, "Games", GameConfig.GameName);
             ThrowIfNotExists(CurrentSaveGameDirectory);
+
+            var adminConfigFile = Path.Combine(BaseSaveGameDirectory, ServerConfig.AdminConfigFile);
+            AdminConfig = EmpyrionAdminConfigFile.ReadAdminConfig(adminConfigFile);
         }
 
         private static string FindDedicatedFile(EmpyrionSettings settings)

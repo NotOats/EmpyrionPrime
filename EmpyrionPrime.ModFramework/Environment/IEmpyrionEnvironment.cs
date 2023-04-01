@@ -50,6 +50,11 @@
         /// The server's game config settings, found in dedicated.yaml under the "GameConfig" section
         /// </summary>
         IEmpyrionGameConfig GameConfig { get; }
+
+        /// <summary>
+        /// The server's admin config file, typically found in adminconfig.yaml under the Saves directory
+        /// </summary>
+        IEmpyrionAdminConfig AdminConfig { get; }
         #endregion
     }
 }
