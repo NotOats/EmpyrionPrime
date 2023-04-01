@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmpyrionPrime.ModFramework"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlyModInterface", "ExamplePlugins\OnlyModInterface\OnlyModInterface.csproj", "{F3133E61-4987-4D82-91AF-8CE84D655252}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmpyrionPrime.Schema", "EmpyrionPrime.Schema\EmpyrionPrime.Schema.csproj", "{D41D1B5F-B54F-44F0-ADC8-17E11815257B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmpyrionPrime.Schema", "EmpyrionPrime.Schema\EmpyrionPrime.Schema.csproj", "{D41D1B5F-B54F-44F0-ADC8-17E11815257B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

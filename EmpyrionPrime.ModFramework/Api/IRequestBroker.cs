@@ -16,6 +16,6 @@ namespace EmpyrionPrime.ModFramework.Api
         /// <param name="eventId">The event Id</param>
         /// <param name="data">The event data</param>
         /// <returns>Task that will complete with the corresponding event from the server</returns>
-        Task<object> SendGameRequest(CmdId eventId, object data);
+        Task<object> SendGameRequest(CmdId eventId, object data, bool noResponse = false);
     }
 }

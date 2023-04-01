@@ -965,7 +965,7 @@ namespace EmpyrionPrime.ModFramework
         /// <returns>Task wrapping a null</returns>
         public async Task InGameMessageSinglePlayer(IdMsgPrio arg, TimeSpan timeout)
         {
-            await _requestBroker.SendGameRequest(CmdId.Request_InGameMessage_SinglePlayer, arg)
+            await _requestBroker.SendGameRequest(CmdId.Request_InGameMessage_SinglePlayer, arg, noResponse: true)
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
         /// <summary>
@@ -990,7 +990,7 @@ namespace EmpyrionPrime.ModFramework
         /// <returns>Task wrapping a null</returns>
         public async Task InGameMessageAllPlayers(IdMsgPrio arg, TimeSpan timeout)
         {
-            await _requestBroker.SendGameRequest(CmdId.Request_InGameMessage_AllPlayers, arg)
+            await _requestBroker.SendGameRequest(CmdId.Request_InGameMessage_AllPlayers, arg, noResponse: true)
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
         /// <summary>
@@ -1015,7 +1015,7 @@ namespace EmpyrionPrime.ModFramework
         /// <returns>Task wrapping a null</returns>
         public async Task InGameMessageFaction(IdMsgPrio arg, TimeSpan timeout)
         {
-            await _requestBroker.SendGameRequest(CmdId.Request_InGameMessage_Faction, arg)
+            await _requestBroker.SendGameRequest(CmdId.Request_InGameMessage_Faction, arg, noResponse: true)
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
         }
         /// <summary>

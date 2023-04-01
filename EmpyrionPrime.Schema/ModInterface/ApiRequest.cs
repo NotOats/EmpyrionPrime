@@ -7,16 +7,23 @@ namespace EmpyrionPrime.Schema.ModInterface
     {
         public CmdId CommandId { get; }
         public Type ArgumentType { get; }
-        public CmdId ResponseId { get; }
+        public CmdId? ResponseId { get; }
         public Type ResponseType { get; }
 
-        public ApiRequest(CmdId commandId, Type argumentType, CmdId responseId, Type responseType = null)
+        public ApiRequest(CmdId commandId, Type argumentType, CmdId? responseId, Type responseType = null)
         {
             CommandId = commandId;
             ArgumentType = argumentType;
             ResponseId = responseId;
-            ResponseType = responseType
-                ?? (ApiSchema.ApiEvents.TryGetValue(ResponseId, out Type type) ? type : null);
+            ResponseType = responseType;
+
+            // Try to figure out the responseType from responseId
+            if (ResponseType == null && 
+                responseId != null && responseId.HasValue &&
+                ApiSchema.ApiEvents.TryGetValue(responseId.Value, out Type type))
+            {
+                ResponseType = type;
+            }
         }
     }
 }

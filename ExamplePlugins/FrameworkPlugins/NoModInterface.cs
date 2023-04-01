@@ -43,7 +43,7 @@ public class NoModInterface : IEmpyrionPlugin
         _options = optionsFactory.Get<PluginOptions>();
         _options.OptionsChanged += () => _logger.LogInformation("Options changed!");
 
-        // ILogger can be used for more indepth logging than ModGameAPI.Console_Write
+        // ILogger can be used for more in depth logging than ModGameAPI.Console_Write
         _logger.LogInformation("{PluginType} loaded", Name);
 
         // Console_Write is still available, along with the other ModGameAPI methods
@@ -58,6 +58,14 @@ public class NoModInterface : IEmpyrionPlugin
 
             _logger.LogInformation("'{PlayerInfo}' loaded into '{PlayfieldName}' (pid {PlayfieldProcessId})",
                 playerInfo.playerName, playfieldStats.playfield, playfieldStats.processId);
+
+            await _apiRequests.InGameMessageSinglePlayer(new IdMsgPrio
+            {
+                id = playerInfo.entityId,
+                msg = $"Welcome {playerInfo.playerName}!",
+                prio = 1,
+                time = 20,
+            });
         };
 
 
@@ -75,6 +83,18 @@ public class NoModInterface : IEmpyrionPlugin
             };
 
             _empyrionGameApi.SendChatMessage(response);
+
+            // How to run async code inside ChatMessage events
+            _ = Task.Run(async () =>
+            {
+                await _apiRequests.InGameMessageSinglePlayer(new IdMsgPrio
+                {
+                    id = messageData.SenderEntityId,
+                    msg = messageData.Text,
+                    prio = 1,
+                    time = 5,
+                });
+            });
         };
     }
 }

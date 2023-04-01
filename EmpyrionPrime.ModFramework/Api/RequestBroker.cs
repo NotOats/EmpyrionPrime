@@ -60,15 +60,20 @@ namespace EmpyrionPrime.ModFramework.Api
         /// <summary>
         /// Send a game request with attached data and returns a TaskCompletionSource that will complete
         /// when the corresponding event is returned from the server.
+        /// 
+        /// Note: If the request has no response it will still reserve a sequenceNumber and TaskCompletionSource.
+        ///       These will be disposed of in a new task after a short period of time.
         /// </summary>
         /// <param name="eventId">The event Id</param>
         /// <param name="data">The event data</param>
+        /// <param name="noResponse">Optional flag if the request has no response.</param>
         /// <returns>Task that will complete with the corresponding event from the server</returns>
         /// <exception cref="ObjectDisposedException">Thrown is the class is disposed</exception>
-        public async Task<object> SendGameRequest(CmdId eventId, object data)
+        public async Task<object> SendGameRequest(CmdId eventId, object data, bool noResponse = false)
         {
             if (_disposeCount > 0) throw new ObjectDisposedException(GetType().Name);
 
+            // Reserve TCS and SequenceNumber
             var tcs = new TaskCompletionSource<object>();
             ushort sequenceNumber;
 
@@ -86,10 +91,26 @@ namespace EmpyrionPrime.ModFramework.Api
             _logger.LogDebug("TCS created for {eventId}, seqNr: {sequenceNumber}, data: {dataType}",
                 eventId, sequenceNumber, data?.GetType());
 
-            if(_basicEmpyrionApi != null)
-                _basicEmpyrionApi.SendEvent(eventId, sequenceNumber, data);
-            else
-                _modGameApi.Game_Request(eventId, sequenceNumber, data);
+
+            // Short delay and then clean up pending request
+            if (noResponse)
+            {
+                _ = Task.Run(async () =>
+                {
+                    // TODO: Configurable delay
+                    await Task.Delay(100);
+
+                    if (_pendingRequests.TryRemove(sequenceNumber, out _))
+                        _logger.LogDebug("Manually handling response for {eventId}, seqNr: {sequenceNumber}", eventId, sequenceNumber);
+                    else
+                        _logger.LogError("Failed to find response for {eventId}, seqNr: {sequenceNumber}", eventId, sequenceNumber);
+
+                    tcs.TrySetResult(null);
+                });
+            }
+
+            // Make the request
+            MakeRequest(eventId, sequenceNumber, data);
 
             return await tcs.Task;
         }
@@ -114,6 +135,16 @@ namespace EmpyrionPrime.ModFramework.Api
                 _logger.LogDebug("Request {sequenceNumber} completed", sequenceNumber);
             else
                 _logger.LogError("Request {sequenceNumber} failed to set result", sequenceNumber);
+        }
+
+        private void MakeRequest(CmdId eventId, ushort sequenceNumber, object data)
+        {
+            if (_basicEmpyrionApi != null)
+                _basicEmpyrionApi.SendEvent(eventId, sequenceNumber, data);
+            else if (_modGameApi != null)
+                _modGameApi.Game_Request(eventId, sequenceNumber, data);
+            else
+                throw new Exception("RequestBroker has no api implementation");
         }
     }
 }

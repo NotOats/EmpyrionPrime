@@ -65,13 +65,20 @@ if(item.ResponseType != null)
             }
 <#
 }
-else
+else if(item.ResponseId != null && item.ResponseId.HasValue)
 {
 #>
             await _requestBroker.SendGameRequest(<#= $"CmdId.{item.CommandId}, {(argumentType != null ? "arg" : "null")}" #>)
                 .TimeoutAfter((int)timeout.TotalMilliseconds);
 <# 
-} 
+}
+else
+{
+#>
+            await _requestBroker.SendGameRequest(<#= $"CmdId.{item.CommandId}, {(argumentType != null ? "arg" : "null")}" #>, noResponse: true)
+                .TimeoutAfter((int)timeout.TotalMilliseconds);
+<#
+}
 #>
         }
 <# 

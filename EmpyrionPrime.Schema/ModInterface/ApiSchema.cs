@@ -87,9 +87,15 @@ namespace EmpyrionPrime.Schema.ModInterface
             new ApiRequest(CmdId.Request_Load_Playfield,               typeof(PlayfieldLoad),               CmdId.Event_Ok),
             new ApiRequest(CmdId.Request_ConsoleCommand,               typeof(PString),                     CmdId.Event_Ok),
             new ApiRequest(CmdId.Request_GetBannedPlayers,             null,                                CmdId.Event_BannedPlayers),
-            new ApiRequest(CmdId.Request_InGameMessage_SinglePlayer,   typeof(IdMsgPrio),                   CmdId.Event_Ok),
-            new ApiRequest(CmdId.Request_InGameMessage_AllPlayers,     typeof(IdMsgPrio),                   CmdId.Event_Ok),
-            new ApiRequest(CmdId.Request_InGameMessage_Faction,        typeof(IdMsgPrio),                   CmdId.Event_Ok),
+            // Contrary to the documentation on the "Official Empyrion: Galactic Survival Wiki" these methods don't return anything
+            // This was confirmed for SinglePlayer by Jascha in 2019: https://empyriononline.com/threads/api-bugs.10252/page-6#post-315192
+            // TODO: Confirm AllPlayers && Faction are the same...
+            //new ApiRequest(CmdId.Request_InGameMessage_SinglePlayer,   typeof(IdMsgPrio),                   CmdId.Event_Ok),
+            //new ApiRequest(CmdId.Request_InGameMessage_AllPlayers,     typeof(IdMsgPrio),                   CmdId.Event_Ok),
+            //new ApiRequest(CmdId.Request_InGameMessage_Faction,        typeof(IdMsgPrio),                   CmdId.Event_Ok),
+            new ApiRequest(CmdId.Request_InGameMessage_SinglePlayer,   typeof(IdMsgPrio),                   null),
+            new ApiRequest(CmdId.Request_InGameMessage_AllPlayers,     typeof(IdMsgPrio),                   null),
+            new ApiRequest(CmdId.Request_InGameMessage_Faction,        typeof(IdMsgPrio),                   null),
             new ApiRequest(CmdId.Request_ShowDialog_SinglePlayer,      typeof(DialogBoxData),               CmdId.Event_DialogButtonIndex),
             new ApiRequest(CmdId.Request_Player_GetAndRemoveInventory, typeof(Id),                          CmdId.Event_Player_GetAndRemoveInventory),
             new ApiRequest(CmdId.Request_Playfield_Entity_List,        typeof(PString),                     CmdId.Event_Playfield_Entity_List),
