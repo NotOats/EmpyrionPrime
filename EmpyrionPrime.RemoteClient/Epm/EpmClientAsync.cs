@@ -1,4 +1,5 @@
-﻿using Eleon.Modding;
+﻿using Eleon;
+using Eleon.Modding;
 using EmpyrionPrime.Plugin.Api;
 using EmpyrionPrime.RemoteClient.Epm.Api;
 using EmpyrionPrime.RemoteClient.Epm.Serializers;
@@ -46,7 +47,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
         public EpmClientAsync(ILogger logger, string ipString, int port, int clientId = -1)
         {
             if (!IPAddress.TryParse(ipString, out IPAddress address))
-                throw new ArgumentException("Invalid ip address", nameof(ipString));
+                throw new ArgumentException("Invalid IP address", nameof(ipString));
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _endPoint = new IPEndPoint(address, port);
@@ -148,7 +149,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
                 }
                 catch(OperationCanceledException)
                 {
-                    // Eat OperationCanceledException, this is from the CancellationTokenSource being cancelled
+                    // Eat OperationCanceledException, this is from the CancellationTokenSource being canceled
                 }
                 catch (IOException ex)
                 {
@@ -167,8 +168,54 @@ namespace EmpyrionPrime.RemoteClient.Epm
                 }
 
                 if (gameEvent != null && gameEvent.HasValue)
-                    _ = Task.Run(() => { GameEventHandler?.Invoke(gameEvent.Value); });
+                    _ = Task.Run(() => { TriggerGameEventHandler(gameEvent.Value); });
             }
+        }
+
+        private void TriggerGameEventHandler(GameEvent gameEvent)
+        {
+            // Eat chat events since EPM doesn't send data
+            if ((GameEventId)gameEvent.Id == GameEventId.Event_ChatMessage)
+                return;
+
+            // Convert EPM's Event_Chat into a regular Event_ChatMessage
+            // This is kind of a hacky work around to get regular mods to work with EPM's chat system
+            // Unfortunately the sequence id will probably be messed up, not sure if this will effect anything
+            if ((GameEventId)gameEvent.Id == GameEventId.Event_Chat && gameEvent.Payload is MessageData message)
+            {
+                var payload = ConvertChatMessage(message);
+                var newEvent = new GameEvent(gameEvent.ClientId, (CmdId)GameEventId.Event_ChatMessage,
+                    gameEvent.SequenceNumber, payload);
+
+                GameEventHandler?.Invoke(newEvent);
+            }
+
+            GameEventHandler?.Invoke(gameEvent);
+        }
+
+        private static ChatInfo ConvertChatMessage(MessageData message)
+        {
+            // Weird mapping, sourced from EmpyrionNetApiAccess & server testing
+            var type = -1;
+            switch (message.Channel)
+            {
+                case Eleon.MsgChannel.Global:
+                    type = 3;
+                    break;
+                case Eleon.MsgChannel.Faction:
+                case Eleon.MsgChannel.Alliance:
+                    type = 5;
+                    break;
+                case Eleon.MsgChannel.SinglePlayer:
+                    type = 8;
+                    break;
+                case Eleon.MsgChannel.Server:
+                    type = 9;
+                    break;
+            }
+
+            return new ChatInfo(message.SenderEntityId, message.Text, 
+                message.RecipientEntityId, message.RecipientFaction.Id, (byte)type);
         }
 
         private async Task WriteSocketAsync(CancellationToken token)
