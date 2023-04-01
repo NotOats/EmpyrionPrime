@@ -2,6 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>NotOats</Authors>
+    <Description>Extended interfaces and apis for developing EmpyrionPrime plugins</Description>
+    <PackageProjectUrl>https://github.com/NotOats/EmpyrionPrime</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/NotOats/EmpyrionPrime</RepositoryUrl>
+    <PackageTags>Empyrion</PackageTags>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,6 +46,10 @@
     <None Update="Api\IApiRequests.Generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>IApiRequests.Generated.cs</LastGenOutput>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
