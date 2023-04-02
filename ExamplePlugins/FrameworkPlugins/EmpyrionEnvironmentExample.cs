@@ -6,14 +6,14 @@ using System.Reflection;
 
 namespace FrameworkPlugins;
 
-public class EnvironmentExamplePlugin : IEmpyrionPlugin
+public class EmpyrionEnvironmentExample : IEmpyrionPlugin
 {
-    public string Name => "Environment Example Plugin";
+    public string Name => "Empyrion Environment";
     public string Author => "NotOats";
     public Version Version => new("1.0");
     public ModInterface? ModInterface => null;
 
-    public EnvironmentExamplePlugin(ILogger logger, 
+    public EmpyrionEnvironmentExample(ILogger logger, 
         // Get the entire environment
         IEmpyrionEnvironment  environment,
         
