@@ -1,6 +1,7 @@
 ﻿using Eleon;
 using Eleon.Modding;
 using EmpyrionPrime.Plugin.Api;
+using EmpyrionPrime.Plugin.Extensions;
 using EmpyrionPrime.RemoteClient.Epm.Api;
 using EmpyrionPrime.RemoteClient.Epm.Serializers;
 using EmpyrionPrime.RemoteClient.Streams;
@@ -183,7 +184,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
             // Unfortunately the sequence id will probably be messed up, not sure if this will effect anything
             if ((GameEventId)gameEvent.Id == GameEventId.Event_Chat && gameEvent.Payload is MessageData message)
             {
-                var payload = ConvertChatMessage(message);
+                var payload = message.ToChatInfo();
                 var newEvent = new GameEvent(gameEvent.ClientId, (CmdId)GameEventId.Event_ChatMessage,
                     gameEvent.SequenceNumber, payload);
 
@@ -191,31 +192,6 @@ namespace EmpyrionPrime.RemoteClient.Epm
             }
 
             GameEventHandler?.Invoke(gameEvent);
-        }
-
-        private static ChatInfo ConvertChatMessage(MessageData message)
-        {
-            // Weird mapping, sourced from EmpyrionNetApiAccess & server testing
-            var type = -1;
-            switch (message.Channel)
-            {
-                case Eleon.MsgChannel.Global:
-                    type = 3;
-                    break;
-                case Eleon.MsgChannel.Faction:
-                case Eleon.MsgChannel.Alliance:
-                    type = 5;
-                    break;
-                case Eleon.MsgChannel.SinglePlayer:
-                    type = 8;
-                    break;
-                case Eleon.MsgChannel.Server:
-                    type = 9;
-                    break;
-            }
-
-            return new ChatInfo(message.SenderEntityId, message.Text, 
-                message.RecipientEntityId, message.RecipientFaction.Id, (byte)type);
         }
 
         private async Task WriteSocketAsync(CancellationToken token)

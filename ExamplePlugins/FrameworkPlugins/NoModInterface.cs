@@ -1,11 +1,11 @@
 ﻿using Eleon;
 using Eleon.Modding;
-using EmpyrionPrime.ModFramework.Extensions;
 using EmpyrionPrime.Plugin;
+using EmpyrionPrime.Plugin.Api;
+using EmpyrionPrime.Plugin.Extensions;
 using Microsoft.Extensions.Logging;
 using EmpyrionPrime.ModFramework;
 using EmpyrionPrime.ModFramework.Configuration;
-using EmpyrionPrime.Plugin.Api;
 
 namespace FrameworkPlugins;
 
