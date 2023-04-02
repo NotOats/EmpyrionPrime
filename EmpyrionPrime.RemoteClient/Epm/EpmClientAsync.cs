@@ -6,6 +6,7 @@ using EmpyrionPrime.RemoteClient.Epm.Serializers;
 using EmpyrionPrime.RemoteClient.Streams;
 using Microsoft.Extensions.Logging;
 using Nito.AsyncEx;
+using Nito.AsyncEx.Synchronous;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -31,7 +32,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
         private Task _readerTask;
         private Task _writerTask;
 
-        private readonly object _tcpClientLock = new object();
+        private readonly SemaphoreSlim _tcpClientLock = new SemaphoreSlim(1, 1);
         private TcpClient _tcpClient = null;
         private AsyncBinaryReader _reader = null;
         private AsyncBinaryWriter _writer = null;
@@ -62,7 +63,6 @@ namespace EmpyrionPrime.RemoteClient.Epm
 
             _shutdownCts.Cancel();
 
-            // Save Accept & Listen tasks, task.Wait() until they're finished. Maybe use IAsyncDisposable?
             try
             {
                 var finished = Task.WaitAll(new[] { _readerTask, _writerTask }, 10 * 1000);
@@ -79,14 +79,15 @@ namespace EmpyrionPrime.RemoteClient.Epm
                 throw;
             }
 
-            CloseConnection();
+            CloseConnectionAsync(CancellationToken.None).WaitAndUnwrapException();
         }
 
         public void Start()
         {
-            lock(_taskLock)
+            ThrowIfDisposed();
+
+            lock (_taskLock)
             {
-                // TODO: Figure out if Task.Run should also get a CancellationToken
                 if (_readerTask == null)
                     _readerTask = Task.Run(async () => { await ReadSocketAsync(_shutdownCts.Token); });
 
@@ -101,11 +102,15 @@ namespace EmpyrionPrime.RemoteClient.Epm
         }
         public IBasicEmpyrionApi CreateBasicApi(ILogger logger)
         {
+            ThrowIfDisposed();
+
             return new EpmBasicEmpyrionApi(logger, this);
         }
 
         public IExtendedEmpyrionApi CreateExtendedApi(ILogger logger)
         {
+            ThrowIfDisposed();
+
             return new EpmExtendedEmpyrionApi(logger, this);
         }
 
@@ -123,7 +128,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
 
             while(!token.IsCancellationRequested)
             {
-                EnsureConnected();
+                await EnsureConnectedAsync(token);
 
                 GameEvent? gameEvent = null;
 
@@ -134,7 +139,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
                     var seqNumber = await _reader.ReadUInt16Async(token);
 
                     var payloadLength = await _reader.ReadInt32Async(token);
-                    if(payloadLength != 0)
+                    if (payloadLength != 0)
                     {
                         // TODO: Monitor payload lengths and figure out what a reasonable reusable buffer length would be
                         var buffer = await _reader.ReadAsync(payloadLength, token);
@@ -147,24 +152,19 @@ namespace EmpyrionPrime.RemoteClient.Epm
                         gameEvent = new GameEvent(clientId, (CmdId)cmdId, seqNumber, null);
                     }
                 }
-                catch(OperationCanceledException)
-                {
-                    // Eat OperationCanceledException, this is from the CancellationTokenSource being canceled
-                }
-                catch (IOException ex)
-                {
-                    _logger.LogWarning(ex, "Connection closed while reading");
-                    CloseConnection();
-                }
-                catch (ObjectDisposedException ex)
-                {
-                    _logger.LogWarning(ex, "Connection disposed while reading");
-                    CloseConnection();
-                }
+                catch (OperationCanceledException) { } // Ignore, from CTS being canceled during a AsyncBinaryReader read method
                 catch (Exception ex)
                 {
-                    _logger.LogWarning(ex, "Error when reading from connection");
-                    CloseConnection();
+                    string msg;
+                    if (ex is IOException)
+                        msg = "Connection closed while reading";
+                    else if (ex is ObjectDisposedException)
+                        msg = "Connection disposed while reading";
+                    else
+                        msg = "Error when reading from connection";
+
+                    _logger.LogWarning(ex, msg);
+                    await CloseConnectionAsync(token);
                 }
 
                 if (gameEvent != null && gameEvent.HasValue)
@@ -226,7 +226,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
             {
                 await _writerNotifier.WaitAsync(token);
 
-                EnsureConnected();
+                await EnsureConnectedAsync(token);
 
                 var error = false;
                 while (_writerQueue.TryDequeue(out GameEvent gameEvent) && !token.IsCancellationRequested)
@@ -245,26 +245,21 @@ namespace EmpyrionPrime.RemoteClient.Epm
 
                         await _writer.FlushAsync(token);
                     }
-                    catch(IOException ex)
-                    {
-                        _logger.LogWarning(ex, "Connection closed while writing");
-                        error = true;
-                    }
-                    catch (ObjectDisposedException ex)
-                    {
-                        _logger.LogWarning(ex, "Connection disposed while writing");
-                        error = true;
-                    }
                     catch (Exception ex)
                     {
-                        _logger.LogWarning(ex, "Error when writing to connection");
-                        error = true;
-                    }
+                        string msg;
+                        if (ex is IOException)
+                            msg = "Connection closed while writing";
+                        else if (ex is ObjectDisposedException)
+                            msg = "Connection disposed while writing";
+                        else
+                            msg = "Error when writing to connection";
 
-                    if(error)
-                    {
+                        _logger.LogWarning(ex, msg);
                         _writerQueue.Enqueue(gameEvent);
-                        CloseConnection();
+                        await CloseConnectionAsync(token);
+
+                        error = true;
                         break;
                     }
                 }
@@ -274,25 +269,51 @@ namespace EmpyrionPrime.RemoteClient.Epm
             }
         }
 
-        private void EnsureConnected()
+        private async Task EnsureConnectedAsync(CancellationToken cancellationToken)
         {
             var connected = false;
+            Task acquiredSemaphoreTask = null;
 
-            lock (_tcpClientLock)
+            try
             {
-                if (_tcpClient != null && _tcpClient.Connected)
-                    return;
+                acquiredSemaphoreTask = _tcpClientLock.WaitAsync(cancellationToken);
+                await acquiredSemaphoreTask;
 
-                _logger.LogDebug("Connecting to {EndPoint}", _endPoint);
+                while((_tcpClient == null || !_tcpClient.Connected) && 
+                    !cancellationToken.IsCancellationRequested)
+                {
+                    if(_tcpClient == null)
+                        _tcpClient = new TcpClient();
 
-                _tcpClient = new TcpClient();
-                _tcpClient.Connect(_endPoint);
+                    if(!_tcpClient.Connected)
+                    {
+                        try
+                        {
+                            _tcpClient.Connect(_endPoint);
 
-                var stream = _tcpClient.GetStream();
-                _reader = new AsyncBinaryReader(stream, leaveOpen: true);
-                _writer = new AsyncBinaryWriter(stream, leaveOpen: true);
+                            var stream = _tcpClient.GetStream();
+                            _reader = new AsyncBinaryReader(stream, leaveOpen: true);
+                            _writer = new AsyncBinaryWriter(stream, leaveOpen: true);
 
-                connected = true;
+                            connected = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            const int retry = 5 * 1000;
+                            if(ex is SocketException _)
+                                _logger.LogWarning("TcpClient failed to connect, retrying in {RetrayTime:n0}ms", retry);
+                            else
+                                _logger.LogWarning(ex, "TcpClient failed to connect, retrying in {RetrayTime:n0}ms", retry);
+
+                            await Task.Delay(retry, cancellationToken);
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                if(acquiredSemaphoreTask?.Status == TaskStatus.RanToCompletion)
+                    _tcpClientLock.Release();
             }
 
             if(connected)
@@ -302,25 +323,33 @@ namespace EmpyrionPrime.RemoteClient.Epm
             }
         }
 
-        private void CloseConnection()
+        private async Task CloseConnectionAsync(CancellationToken cancellationToken)
         {
+            Task acquiredSemaphoreTask = null;
+
             try
             {
-                lock(_tcpClientLock)
-                {
-                    _reader?.Dispose();
-                    _reader = null;
+                acquiredSemaphoreTask = _tcpClientLock.WaitAsync(cancellationToken);
+                await acquiredSemaphoreTask;
 
-                    _writer?.Dispose();
-                    _writer = null;
+                _reader?.Dispose();
+                _reader = null;
 
-                    _tcpClient?.Close();
-                    _tcpClient = null;
-                }
+                _writer?.Dispose();
+                _writer = null;
+
+                _tcpClient?.Close();
+                _tcpClient = null;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to close connection");
+                return;
+            }
+            finally
+            {
+                if (acquiredSemaphoreTask?.Status == TaskStatus.RanToCompletion)
+                    _tcpClientLock.Release();
             }
 
             OnDisconnected?.Invoke();
