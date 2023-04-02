@@ -14,6 +14,7 @@
     <Version>1.0.1.0</Version>
     <AssemblyVersion>$(AssemblyVersion)</AssemblyVersion>
     <FileVersion>$(AssemblyVersion)</FileVersion>
+    <PackageReleaseNotes>A changelog is available at https://github.com/NotOats/EmpyrionPrime/blob/master/EmpyrionPrime.ModFramework/CHANGELOG.md</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
