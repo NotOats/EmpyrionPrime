@@ -2,6 +2,12 @@
 {
     /// <summary>
     /// Factory for reading options from the plugin's configuration system
+    /// By default this will read settings in the following order
+    /// From the plugin's folder:
+    ///     appsettings.json
+    ///     appsettings.[EnvironmentName].json
+    /// Environment variables:
+    ///     [PLUGIN_CLASS_NAME]_[VARIABLE_NAME]
     /// </summary>
     public interface IPluginOptionsFactory
     {
