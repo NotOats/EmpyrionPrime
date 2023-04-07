@@ -23,7 +23,7 @@ internal class EmpyrionEnvironment : IEmpyrionEnvironment
 
     public IEmpyrionAdminConfig AdminConfig { get; }
 
-    public EmpyrionEnvironment(EmpyrionSettings settings)
+    public EmpyrionEnvironment(LauncherSettings settings)
     {
         ServerDirectory = settings.ServerPath ?? throw new ArgumentNullException(nameof(settings), "ServerPath is null");
         ThrowIfNotExists(ServerDirectory);
@@ -53,7 +53,7 @@ internal class EmpyrionEnvironment : IEmpyrionEnvironment
         AdminConfig = EmpyrionAdminConfigFile.ReadAdminConfig(adminConfigFile);
     }
 
-    private static string FindDedicatedFile(EmpyrionSettings settings)
+    private static string FindDedicatedFile(LauncherSettings settings)
     {
         var file = settings.DedicatedFile;
 

@@ -93,7 +93,7 @@ internal class PluginHost : IPluginHost
         container.RegisterInstance<IServiceProvider>(container);
 
         // Settings & Environment
-        container.RegisterInstance(_serviceProvider.GetRequiredService<EmpyrionSettings>());
+        container.RegisterInstance(_serviceProvider.GetRequiredService<LauncherSettings>());
         container.RegisterInstance(_serviceProvider.GetRequiredService<PluginsSettings>());
         container.RegisterSingleton(_serviceProvider.GetRequiredService<IHostEnvironment>);
 

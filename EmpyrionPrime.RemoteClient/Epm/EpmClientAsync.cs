@@ -46,10 +46,18 @@ namespace EmpyrionPrime.RemoteClient.Epm
         public event Action OnDisconnected;
         public event Action<GameEvent> GameEventHandler;
 
+        public EpmClientAsync(ILogger logger, EpmClientSettings settings)
+            : this(logger, settings.IPAddress, settings.Port, settings.ClientId)
+        {
+        }
+
         public EpmClientAsync(ILogger logger, string ipString, int port, int clientId = -1)
         {
             if (!IPAddress.TryParse(ipString, out IPAddress address))
                 throw new ArgumentException("Invalid IP address", nameof(ipString));
+
+            if (port < 1 || port > 65535)
+                throw new ArgumentException("Invalid port", nameof(port));
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _endPoint = new IPEndPoint(address, port);

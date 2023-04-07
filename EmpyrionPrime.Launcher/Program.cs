@@ -55,7 +55,12 @@ try
     var host = builder.Build()
         .UseSimpleInjector(container);
 
-    AddInstancesToContainer(container, configuration);
+    RegisterSettings(container, configuration);
+    RegisterInterfaces(container, configuration);
+
+#if DEBUG
+    container.Verify();
+#endif
 
     host.Run();
 
@@ -75,43 +80,50 @@ finally
     Log.CloseAndFlush();
 }
 
-static void AddInstancesToContainer(Container container, IConfigurationRoot configuration)
+static void RegisterInterfaces(Container container, IConfigurationRoot configuration)
 {
+    // Load service provider from container
     container.RegisterInstance<IServiceProvider>(container);
 
-    // Directly register settings which SimpleInjector prefers to IOptions<T>
-    RegisterSettings<EmpyrionSettings>(container, configuration, "Empyrion");
-    RegisterSettings<PluginsSettings>(container, configuration, "Plugins");
-
-    // Register empyrion interfaces
-    container.RegisterSingleton<IRemoteEmpyrion>(() =>
+    // Temporarily create EmpyrionSettings to figure out which RemoteClient to register
+    var launcherSettings = LoadSettings<LauncherSettings>(configuration, "Launcher");
+    Func<IRemoteEmpyrion> loader = launcherSettings.RemoteClient switch
     {
-        var logger = container.GetInstance<ILogger<EpmClient>>();
-        var settings = container.GetInstance<EmpyrionSettings>();
+        "EpmClientAsync" => () =>
+            {
+                var logger = container.GetInstance<ILogger<EpmClient>>();
+                var configuration = container.GetInstance<IConfigurationRoot>();
+                var settings = LoadSettings<EpmClientSettings>(configuration, "EpmClient");
 
-        //var client = new EpmClient(logger, settings.EpmAddress, settings.EpmPort, settings.EpmClientId);
-        var client = new EpmClientAsync(logger, settings.EpmAddress, settings.EpmPort, settings.EpmClientId);
-        client.Start();
+                var instance = new EpmClientAsync(logger, settings);
+                instance.Start();
 
-        return client;
-    });
-
+                return instance;
+            },
+        _ => throw new Exception($"Unknown RemoteClient type of '{launcherSettings.RemoteClient}'"),
+    };
+    
+    // Continue with registration
+    container.RegisterSingleton(loader);
     container.RegisterSingleton<IPluginManager, PluginManager>();
-
-#if DEBUG
-    container.Verify();
-#endif
 }
 
-static void RegisterSettings<T>(Container container, IConfigurationRoot configuration, string? section = null) where T : class
+static void RegisterSettings(Container container, IConfigurationRoot configuration)
+{
+    container.RegisterInstance(configuration);
+    container.RegisterInstance(LoadSettings<LauncherSettings>(configuration, "Launcher"));
+    container.RegisterInstance(LoadSettings<PluginsSettings>(configuration, "Plugins"));
+}
+
+static T LoadSettings<T>(IConfigurationRoot configuration, string? section = null) where T : class
 {
     section ??= typeof(T).Name;
 
-    var instance = configuration.GetSection(section).Get<T>() 
+    var instance = configuration.GetSection(section).Get<T>()
         ?? throw new Exception($"Failed to create {typeof(T).Name} from '{section}'");
 
     if (instance is ISettingsValidator validator)
         validator.Validate();
 
-    container.RegisterInstance<T>(instance);
+    return instance;
 }

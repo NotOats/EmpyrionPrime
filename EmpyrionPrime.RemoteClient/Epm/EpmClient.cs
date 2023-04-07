@@ -8,6 +8,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
@@ -26,9 +27,22 @@ namespace EmpyrionPrime.RemoteClient.Epm
 
         public int ClientId { get; }
 
+        public EpmClient(ILogger logger, EpmClientSettings settings)
+            : this(logger, settings.IPAddress, settings.Port, settings.ClientId)
+        {
+            if (!IPAddress.TryParse(settings.IPAddress, out _))
+                throw new ArgumentException("Invalid IP address", nameof(settings));
+
+            if (settings.Port < 1 || settings.Port > 65535)
+                throw new ArgumentException("Invalid port", nameof(settings));
+
+            if(logger == null)
+                throw new ArgumentNullException(nameof(logger));
+        }
+
         public EpmClient(ILogger logger, string address = "127.0.0.1", int port = 12345, int clientId = -1)
         {
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             ClientId = clientId == -1 ? Process.GetCurrentProcess().Id : clientId;
 
             _tcpClient = new ThreadedTcpClient(_logger, address, port);

@@ -1,22 +1,11 @@
-﻿using System.Net;
+﻿namespace EmpyrionPrime.Launcher;
 
-namespace EmpyrionPrime.Launcher;
-
-internal class Settings
-{
-    public required EmpyrionSettings Empyrion { get; set; }
-    public required PluginsSettings Plugins { get; set; }
-
-}
-
-internal class EmpyrionSettings : ISettingsValidator
+internal class LauncherSettings : ISettingsValidator
 {
     public required string ServerPath { get; set; }
     public string DedicatedFile { get; set; } = "dedicated.yaml";
 
-    public string EpmAddress { get; set; } = "127.0.0.1";
-    public int EpmPort { get; set; } = 12345;
-    public int EpmClientId { get; set; } = Environment.ProcessId;
+    public string RemoteClient { get; set; } = "EpmClientAsync";
 
     public void Validate()
     {
@@ -32,13 +21,10 @@ internal class EmpyrionSettings : ISettingsValidator
         if (!File.Exists(DedicatedFile) && !File.Exists(computed))
             throw new FileNotFoundException("DedicatedFile was not found", DedicatedFile);
 
-        // EpmAddress
-        if (!IPAddress.TryParse(EpmAddress, out _))
-            throw new FormatException("EpmAddress is not a valid IP address");
-
-        // EpmPort
-        if (EpmPort < 1 || EpmPort > 65535)
-            throw new FormatException("EpmPort is not a valid port");
+        // TODO: Validate RemoteClient against available clients in EmpyrionPrime.RemoteClient
+        // For now ensure it's "EpmClientAsync"
+        if(RemoteClient != "EpmClientAsync")
+            throw new ArgumentException("Invalid remote client selection", nameof(RemoteClient));
     }
 }
 
