@@ -35,5 +35,20 @@ public class BasicFrameworkExample : IEmpyrionPlugin
             logger.LogInformation("{Player} connected to {Playfield} (pid: {ProcessId}, uptime: {Uptime})",
                 player.playerName, playfield.playfield, playfield.processId, playfield.uptime);
         };
+
+        apiEvents.ChatMessage += async chatInfo => 
+        {
+            var trigger = ".echo-basic ";
+            if (!chatInfo.msg.StartsWith(trigger))
+                return;
+
+            var message = chatInfo.msg[trigger.Length..];
+            if (message == string.Empty)
+                return;
+
+
+            var command = $"say 'Echoing {message}'";
+            await apiRequests.ConsoleCommand(command.ToPString());
+        };
     }
 }

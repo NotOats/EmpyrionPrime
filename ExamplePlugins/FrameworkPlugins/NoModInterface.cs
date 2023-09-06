@@ -72,14 +72,22 @@ public class NoModInterface : IEmpyrionPlugin
         // Or even handle chat messages via IExtendedEmpyrionApi
         _empyrionGameApi.ChatMessage += messageData =>
         {
-            _logger.LogInformation("Echoing {EntityId}: {Text}", messageData.SenderEntityId, messageData.Text);
+            var trigger = ".echo-no ";
+            if (!messageData.Text.StartsWith(trigger))
+                return;
+
+            var message = messageData.Text[trigger.Length..];
+            if (message == string.Empty)
+                return;
+
+            _logger.LogInformation("Echoing {EntityId}: {Text}", messageData.SenderEntityId, message);
 
             var response = new MessageData
             {
                 SenderType = Eleon.SenderType.System,
                 Channel = Eleon.MsgChannel.Global,
                 SenderNameOverride = "Echo",
-                Text = messageData.Text
+                Text = message
             };
 
             _empyrionGameApi.SendChatMessage(response);
@@ -90,7 +98,7 @@ public class NoModInterface : IEmpyrionPlugin
                 await _apiRequests.InGameMessageSinglePlayer(new IdMsgPrio
                 {
                     id = messageData.SenderEntityId,
-                    msg = messageData.Text,
+                    msg = message,
                     prio = 1,
                     time = 5,
                 });
