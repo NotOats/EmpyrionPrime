@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "EmpyrionPrime.RemoteClient.Console": {
+      "commandName": "Project"
+    },
+    "Say Message": {
+      "commandName": "Project",
+      "commandLineArgs": "run \"say 'testing 123'\""
+    },
+    "Quiet: Say Message": {
+      "commandName": "Project",
+      "commandLineArgs": "run -q \"say 'testing 123'\""
+    }
+  }
+}
