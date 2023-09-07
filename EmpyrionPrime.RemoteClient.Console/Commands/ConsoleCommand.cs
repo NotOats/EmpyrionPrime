@@ -31,6 +31,9 @@ internal class ConsoleCommand : AsyncCommand<ConsoleCommandSettings>
     {
         _loggerFactory = Logging.Factory;
         _logger = _loggerFactory.CreateLogger("ConsoleCommand");
+
+        if (!Logging.QuietMode)
+            AnsiConsole.Write(new FigletText("RemoteClient Console").Centered());
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, ConsoleCommandSettings settings)

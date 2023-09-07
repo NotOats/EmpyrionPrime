@@ -7,9 +7,17 @@
       "commandName": "Project",
       "commandLineArgs": "run \"say 'testing 123'\""
     },
-    "Quiet: Say Message": {
+    "Say Message, Quiet": {
       "commandName": "Project",
       "commandLineArgs": "run -q \"say 'testing 123'\""
+    },
+    "Request: DediStats": {
+      "commandName": "Project",
+      "commandLineArgs": "request DediStats"
+    },
+    "Request: ConsoleCommand ": {
+      "commandName": "Project",
+      "commandLineArgs": "request ConsoleCommand \"{\\\"pstr\\\":\\\"say 'Say a message via requests!'\\\"}\""
     }
   }
 }

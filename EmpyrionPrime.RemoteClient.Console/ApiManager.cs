@@ -16,6 +16,9 @@ internal class ApiManager : IDisposable
     public IApiRequests ApiRequests => _apiRequests 
         ?? throw new NullReferenceException("ApiRequests is null, possibly disposed?");
 
+    public IRequestBroker Broker => _broker 
+        ?? throw new NullReferenceException("RequestBroker is null, possibly disposed?");
+
     public ApiManager(ILoggerFactory loggerFactory, string address, int port)
     {
         var clientLogger = loggerFactory.CreateLogger("EpmClient");

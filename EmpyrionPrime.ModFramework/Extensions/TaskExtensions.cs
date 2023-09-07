@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace EmpyrionPrime.ModFramework.Extensions
 {
-    internal static class TaskExtensions
+    public  static class TaskExtensions
     {
         // From: https://devblogs.microsoft.com/pfxteam/crafting-a-task-timeoutafter-method/
         public static Task<TResult> TimeoutAfter<TResult>(this Task<TResult> task, int milliseconds)

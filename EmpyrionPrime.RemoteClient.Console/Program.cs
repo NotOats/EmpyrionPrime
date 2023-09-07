@@ -1,10 +1,8 @@
 ﻿using EmpyrionPrime.RemoteClient.Console;
 using EmpyrionPrime.RemoteClient.Console.Commands;
+using EmpyrionPrime.Schema.ModInterface;
 using Spectre.Console;
 using Spectre.Console.Cli;
-
-if(!Logging.QuietMode)
-    AnsiConsole.Write(new FigletText("RemoteClient Console").Centered());
 
 var app = new CommandApp();
 app.Configure(config =>
@@ -14,7 +12,38 @@ app.Configure(config =>
 
     config.AddCommand<ConsoleCommand>("run")
         .WithAlias("console-command")
-        .WithDescription("Runs a console command on the server");
+        .WithDescription("Runs a console command on the server")
+        .WithExample("run", "-q", "\"say 'Some message from the server here.'\"");
+
+    config.AddBranch<CommandSettings>("request", parent =>
+    {
+        parent.SetDescription("Runs a request on the server");
+        parent.AddExample(new[] { "request", "PlayfieldList", "-q" });
+        parent.AddExample(new[] { "request", "PlayfieldStats", "-q", @"""{\""pstr\"":\""Haven Sector\""}""" });
+
+        foreach(var request in ApiSchema.ApiRequests)
+        {
+            var name = request.CommandId.ToString().Replace("Request_", "").Replace("_", "");
+            var alias = request.CommandId.ToString().Replace("Request_", "").ToLower();
+            var argType = request.ArgumentType != null ? request.ArgumentType.FullName : "None";
+            var retType = request.ResponseType != null ? request.ResponseType.FullName : "None";
+
+            if(request.ArgumentType != null)
+            {
+                parent.AddCommand<RequestCommand<RequestWithPayloadSettings>>(name)
+                    .WithAlias(alias)
+                    .WithDescription($"Runs {request.CommandId} on the server.\n     Argument: {argType}\n     Response: {retType}")
+                    .WithData(request);
+            } 
+            else
+            {
+                parent.AddCommand<RequestCommand<RequestSettings>>(name)
+                    .WithAlias(alias)
+                    .WithDescription($"Runs {request.CommandId} on the server.\n     Response: {retType}")
+                    .WithData(request);
+            }
+        }
+    });
 });
 
 await app.RunAsync(args);
