@@ -19,6 +19,9 @@ internal class ApiManager : IDisposable
     public IRequestBroker Broker => _broker 
         ?? throw new NullReferenceException("RequestBroker is null, possibly disposed?");
 
+    public IBasicEmpyrionApi EmpyrionApi => _empyrionApi 
+        ?? throw new NullReferenceException("BasicEmpyrionApi is null, possibly disposed?");
+
     public ApiManager(ILoggerFactory loggerFactory, string address, int port)
     {
         var clientLogger = loggerFactory.CreateLogger("EpmClient");

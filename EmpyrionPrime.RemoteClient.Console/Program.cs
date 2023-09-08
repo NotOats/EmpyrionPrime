@@ -1,7 +1,5 @@
-﻿using EmpyrionPrime.RemoteClient.Console;
-using EmpyrionPrime.RemoteClient.Console.Commands;
+﻿using EmpyrionPrime.RemoteClient.Console.Commands;
 using EmpyrionPrime.Schema.ModInterface;
-using Spectre.Console;
 using Spectre.Console.Cli;
 
 var app = new CommandApp();
@@ -14,6 +12,10 @@ app.Configure(config =>
         .WithAlias("console-command")
         .WithDescription("Runs a console command on the server")
         .WithExample("run", "-q", "\"say 'Some message from the server here.'\"");
+
+    config.AddCommand<ListenCommand>("listen")
+        .WithDescription("Listens for events from the server")
+        .WithExample("listen", "-f", "Event_Dedi_Stats");
 
     config.AddBranch<CommandSettings>("request", parent =>
     {

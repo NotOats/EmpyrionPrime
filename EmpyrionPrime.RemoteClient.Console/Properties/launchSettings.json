@@ -18,6 +18,14 @@
     "Request: ConsoleCommand ": {
       "commandName": "Project",
       "commandLineArgs": "request ConsoleCommand \"{\\\"pstr\\\":\\\"say 'Say a message via requests!'\\\"}\""
+    },
+    "Listen: default": {
+      "commandName": "Project",
+      "commandLineArgs": "listen"
+    },
+    "Listen: json PlayerList": {
+      "commandName": "Project",
+      "commandLineArgs": "listen -o json -f Event_Player_List"
     }
   }
 }
