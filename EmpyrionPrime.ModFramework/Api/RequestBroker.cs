@@ -123,10 +123,9 @@ namespace EmpyrionPrime.ModFramework.Api
 
             if (eventId == CmdId.Event_Error && data is ErrorInfo errorInfo)
             {
-                var errorMessage = errorInfo.errorType.ToString();
-                tcs.TrySetException(new Exception(errorMessage));
+                tcs.TrySetException(new EmpyrionRequestException(errorInfo.errorType));
 
-                _logger.LogError("Error with request {sequenceNumber}: {errorMessage}", sequenceNumber, errorMessage);
+                _logger.LogError("Error with request {sequenceNumber}: {errorMessage}", sequenceNumber, errorInfo.errorType.ToString());
 
                 return;
             }
@@ -145,6 +144,16 @@ namespace EmpyrionPrime.ModFramework.Api
                 _modGameApi.Game_Request(eventId, sequenceNumber, data);
             else
                 throw new Exception("RequestBroker has no api implementation");
+        }
+    }
+
+    public class EmpyrionRequestException : Exception
+    {
+        public ErrorType RequestError { get; }
+        public EmpyrionRequestException(ErrorType requestError) 
+            : base(requestError.ToString())
+        {
+            RequestError = requestError;
         }
     }
 }

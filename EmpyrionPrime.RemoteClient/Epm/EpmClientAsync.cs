@@ -10,6 +10,7 @@ using Nito.AsyncEx;
 using Nito.AsyncEx.Synchronous;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -74,7 +75,15 @@ namespace EmpyrionPrime.RemoteClient.Epm
 
             try
             {
-                var finished = Task.WaitAll(new[] { _readerTask, _writerTask }, 10 * 1000);
+                // Fix for calling dispose before start
+                var tasks = new List<Task>();
+                if(_readerTask != null)
+                    tasks.Add(_readerTask);
+
+                if(_writerTask != null)
+                    tasks.Add(_writerTask);
+
+                var finished = Task.WaitAll(tasks.ToArray(), 10 * 1000);
                 if (!finished)
                 {
                     _logger.LogError("Reader/Writer tasks failed to stop in time.");
@@ -91,6 +100,21 @@ namespace EmpyrionPrime.RemoteClient.Epm
             CloseConnectionAsync(CancellationToken.None).WaitAndUnwrapException();
         }
 
+        /// <summary>
+        /// Connects to the EPM server and creates the reader/writer streams
+        /// </summary>
+        /// <param name="retryOnError">Retry or throw exception on error</param>
+        /// <returns></returns>
+        public async Task Connect(bool retryOnError = true)
+        {
+            ThrowIfDisposed();
+
+            await EnsureConnectedAsync(_shutdownCts.Token, retryOnError);
+        }
+
+        /// <summary>
+        /// Starts the Reader & Write tasks, this will also run Connect with retrying if not previously called
+        /// </summary>
         public void Start()
         {
             ThrowIfDisposed();
@@ -253,7 +277,7 @@ namespace EmpyrionPrime.RemoteClient.Epm
             }
         }
 
-        private async Task EnsureConnectedAsync(CancellationToken cancellationToken)
+        private async Task EnsureConnectedAsync(CancellationToken cancellationToken, bool retryOnError = true)
         {
             var connected = false;
             Task acquiredSemaphoreTask = null;
@@ -263,8 +287,8 @@ namespace EmpyrionPrime.RemoteClient.Epm
                 acquiredSemaphoreTask = _tcpClientLock.WaitAsync(cancellationToken);
                 await acquiredSemaphoreTask;
 
-                while((_tcpClient == null || !_tcpClient.Connected) && 
-                    !cancellationToken.IsCancellationRequested)
+                while((_tcpClient == null || !_tcpClient.Connected) 
+                    && !cancellationToken.IsCancellationRequested)
                 {
                     if(_tcpClient == null)
                         _tcpClient = new TcpClient();
@@ -283,13 +307,18 @@ namespace EmpyrionPrime.RemoteClient.Epm
                         }
                         catch (Exception ex)
                         {
-                            const int retry = 5 * 1000;
-                            if(ex is SocketException _)
-                                _logger.LogWarning("TcpClient failed to connect, retrying in {RetrayTime:n0}ms", retry);
-                            else
-                                _logger.LogWarning(ex, "TcpClient failed to connect, retrying in {RetrayTime:n0}ms", retry);
+                            // Throw if we're not retrying
+                            if(!retryOnError)
+                                throw ex;
 
-                            await Task.Delay(retry, cancellationToken);
+                            // Wait and try again
+                            const int pause = 5 * 1000;
+                            if(ex is SocketException _)
+                                _logger.LogWarning("TcpClient failed to connect, retrying in {RetrayTime:n0}ms", pause);
+                            else
+                                _logger.LogWarning(ex, "TcpClient failed to connect, retrying in {RetrayTime:n0}ms", pause);
+
+                            await Task.Delay(pause, cancellationToken);
                         }
                     }
                 }
