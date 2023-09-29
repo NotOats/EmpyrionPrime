@@ -8,6 +8,9 @@ namespace EmpyrionPrime.RemoteClient.Console;
 
 internal class ApiManager : IDisposable
 {
+    private readonly ILoggerFactory _loggerFactory;
+    private readonly ILogger _logger;
+
     private EpmClientAsync? _client;
     private IBasicEmpyrionApi? _empyrionApi;
     private IRequestBroker? _broker;
@@ -24,15 +27,42 @@ internal class ApiManager : IDisposable
 
     public ApiManager(ILoggerFactory loggerFactory, string address, int port)
     {
-        var clientLogger = loggerFactory.CreateLogger("EpmClient");
-        _client = new EpmClientAsync(clientLogger, address, port);
-        _client.Start();
+        _loggerFactory = loggerFactory;
+        _logger = loggerFactory.CreateLogger<ApiManager>();
 
+        var clientLogger = _loggerFactory.CreateLogger("EpmClient");
+        _client = new EpmClientAsync(clientLogger, address, port);
+    }
+
+    public async Task<bool> Connect(bool retryOnError = true)
+    {
+        if (_client == null)
+            return false;
+
+        var connected = false;
+        try
+        {
+            await _client.Connect(retryOnError);
+            connected = true;
+            _client.Start();
+        }
+        catch (Exception ex)
+        {
+            if (!connected)
+                _logger.LogError(ex, "Failed to connect to server");
+            else
+                _logger.LogError(ex, "Failed to start reader/writer tasks");
+
+            return false;
+        }
+
+        var clientLogger = _loggerFactory.CreateLogger("EpmClient");
         _empyrionApi = _client.CreateBasicApi(clientLogger);
 
-        _broker = new RequestBroker(loggerFactory.CreateLogger("Broker"), _empyrionApi);
+        _broker = new RequestBroker(_loggerFactory.CreateLogger("Broker"), _empyrionApi);
+        _apiRequests = new ApiRequests(_loggerFactory.CreateLogger("ApiRequests"), _broker);
 
-        _apiRequests = new ApiRequests(loggerFactory.CreateLogger("ApiRequests"), _broker);
+        return true;
     }
 
     public void Dispose()

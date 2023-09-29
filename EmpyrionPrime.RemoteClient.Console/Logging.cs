@@ -17,5 +17,4 @@ internal static class Logging
             options.SingleLine = true;
         });
     });
-
 }

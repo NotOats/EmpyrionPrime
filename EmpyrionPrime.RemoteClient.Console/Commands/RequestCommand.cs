@@ -1,4 +1,5 @@
-﻿using EmpyrionPrime.ModFramework.Extensions;
+﻿using EmpyrionPrime.ModFramework.Api;
+using EmpyrionPrime.ModFramework.Extensions;
 using EmpyrionPrime.RemoteClient.Console.Settings;
 using EmpyrionPrime.Schema.ModInterface;
 using Microsoft.Extensions.Logging;
@@ -47,17 +48,23 @@ internal class RequestCommand<TSettings> : AsyncCommand<TSettings> where TSettin
 
     public override async Task<int> ExecuteAsync(CommandContext context, TSettings settings)
     {
+        settings.OverrideFromConfigFile();
+        if (!settings.Validate().Successful)
+            return (int)ErrorCodes.CommandSettings;
+
         if (context.Data is not ApiRequest request)
             throw new InvalidOperationException("Command has no associated data");
 
         if (!ReadPayload(request, settings, out object? payload))
-            return 1;
+            return (int)ErrorCodes.CommandPayload;
 
         ApiManager? manager = null;
 
         try
         {
             manager = new ApiManager(_loggerFactory, settings.EpmAddress!, settings.EpmPort);
+            if (!await manager.Connect(false))
+                return (int)ErrorCodes.ServerConnection;
 
             var response = await manager.Broker.SendGameRequest(request.CommandId, payload, request.ResponseId == null)
                 .TimeoutAfter((int)DefaultTimeout.TotalMilliseconds);
@@ -70,10 +77,21 @@ internal class RequestCommand<TSettings> : AsyncCommand<TSettings> where TSettin
             var json = JsonSerializer.Serialize(response, new JsonSerializerOptions {IncludeFields = true});
             System.Console.WriteLine(json);
         }
+        catch(AggregateException ae)
+        {
+            if (ae.InnerExceptions.FirstOrDefault(x => x is EmpyrionRequestException) is EmpyrionRequestException requestException)
+            {
+                // Simplified output in case quite mode
+                // TODO: Sort this out better when logging settings are a thing
+                System.Console.WriteLine($"Error: {requestException.RequestError}");
+
+                return (int)ErrorCodes.RequestError;
+            }
+        }
         catch(Exception ex)
         {
             _logger.LogError(ex, "Failed to run command");
-            return 1;
+            return (int)ErrorCodes.Unknown;
         }
         finally
         {
@@ -81,7 +99,7 @@ internal class RequestCommand<TSettings> : AsyncCommand<TSettings> where TSettin
         }
 
 
-        return 0;
+        return (int)ErrorCodes.None;
     }
 
     public override ValidationResult Validate(CommandContext context, TSettings settings)

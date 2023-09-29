@@ -1,4 +1,5 @@
 ﻿using Eleon.Modding;
+using EmpyrionPrime.ModFramework.Api;
 using EmpyrionPrime.RemoteClient.Console.Settings;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
@@ -40,13 +41,15 @@ internal class ConsoleCommand : AsyncCommand<ConsoleCommandSettings>
     {
         settings.OverrideFromConfigFile();
         if (!settings.Validate().Successful)
-            return 1;
+            return (int)ErrorCodes.CommandSettings;
 
         ApiManager? manager = null;
 
         try
         {
             manager = new ApiManager(_loggerFactory, settings.EpmAddress!, settings.EpmPort);
+            if (!await manager.Connect(false))
+                return (int)ErrorCodes.ServerConnection;
 
             _logger.LogInformation("Sending command: \"{command}\"", settings.Command);
 
@@ -55,16 +58,27 @@ internal class ConsoleCommand : AsyncCommand<ConsoleCommandSettings>
 
             _logger.LogInformation("Finished");
         }
+        catch (AggregateException ae)
+        {
+            if (ae.InnerExceptions.FirstOrDefault(x => x is EmpyrionRequestException) is EmpyrionRequestException requestException)
+            {
+                // Simplified output in case quite mode
+                // TODO: Sort this out better when logging settings are a thing
+                System.Console.WriteLine($"Error: {requestException.RequestError}");
+
+                return (int)ErrorCodes.RequestError;
+            }
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to run command");
-            return 1;
+            return (int)ErrorCodes.Unknown;
         }
         finally
         {
             manager?.Dispose();
         }
 
-        return 0;
+        return (int)ErrorCodes.None;
     }
 }

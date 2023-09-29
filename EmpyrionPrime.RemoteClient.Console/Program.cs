@@ -48,4 +48,4 @@ app.Configure(config =>
     });
 });
 
-await app.RunAsync(args);
+return await app.RunAsync(args);

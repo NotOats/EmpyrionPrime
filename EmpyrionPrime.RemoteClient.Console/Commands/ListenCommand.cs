@@ -1,4 +1,5 @@
 ﻿using Eleon.Modding;
+using EmpyrionPrime.ModFramework.Api;
 using EmpyrionPrime.RemoteClient.Console.Settings;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
@@ -72,6 +73,10 @@ internal class ListenCommand : AsyncCommand<ListenSettings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, ListenSettings settings)
     {
+        settings.OverrideFromConfigFile();
+        if (!settings.Validate().Successful)
+            return (int)ErrorCodes.CommandSettings;
+
         var eventFilter = settings.ParseEventFilter();
 
         if (!Logging.QuietMode)
@@ -82,6 +87,9 @@ internal class ListenCommand : AsyncCommand<ListenSettings>
         try
         {
             manager = new ApiManager(_loggerFactory, settings.EpmAddress!, settings.EpmPort);
+            if (!await manager.Connect(false))
+                return (int)ErrorCodes.ServerConnection;
+
             manager.EmpyrionApi.GameEvent += (cmdId, seqNum, data) =>
             {
                 if (eventFilter != null && (int)cmdId != eventFilter)
@@ -96,17 +104,28 @@ internal class ListenCommand : AsyncCommand<ListenSettings>
             // Wait for cancellation request
             await _tcs.Task.ConfigureAwait(false);
         }
+        catch (AggregateException ae)
+        {
+            if (ae.InnerExceptions.FirstOrDefault(x => x is EmpyrionRequestException) is EmpyrionRequestException requestException)
+            {
+                // Simplified output in case quite mode
+                // TODO: Sort this out better when logging settings are a thing
+                System.Console.WriteLine($"Error: {requestException.RequestError}");
+
+                return (int)ErrorCodes.RequestError;
+            }
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to run command");
-            return 1;
+            return (int)ErrorCodes.Unknown;
         }
         finally
         {
             manager?.Dispose();
         }
 
-        return 0;
+        return (int)ErrorCodes.None;
     }
 
     private readonly struct WrappedGameEvent
@@ -120,10 +139,10 @@ internal class ListenCommand : AsyncCommand<ListenSettings>
 
         public string Format(string format)
         {
-            var serialize = (object? obj) =>
+            static string serialize(object? obj)
             {
                 return JsonSerializer.Serialize(obj, new JsonSerializerOptions { IncludeFields = true });
-            };
+            }
 
             var output = format switch
             {
