@@ -13,6 +13,7 @@ internal class ApiManager : IDisposable
 
     private EpmClientAsync? _client;
     private IBasicEmpyrionApi? _empyrionApi;
+    private IExtendedEmpyrionApi? _extendedEmpyrionApi;
     private IRequestBroker? _broker;
     private IApiRequests? _apiRequests;
 
@@ -24,6 +25,8 @@ internal class ApiManager : IDisposable
 
     public IBasicEmpyrionApi EmpyrionApi => _empyrionApi 
         ?? throw new NullReferenceException("BasicEmpyrionApi is null, possibly disposed?");
+
+    public IExtendedEmpyrionApi? ExtendedEmpyrionApi => _extendedEmpyrionApi;
 
     public ApiManager(ILoggerFactory loggerFactory, string address, int port)
     {
@@ -58,6 +61,7 @@ internal class ApiManager : IDisposable
 
         var clientLogger = _loggerFactory.CreateLogger("EpmClient");
         _empyrionApi = _client.CreateBasicApi(clientLogger);
+        _extendedEmpyrionApi = _client.CreateExtendedApi(clientLogger);
 
         _broker = new RequestBroker(_loggerFactory.CreateLogger("Broker"), _empyrionApi);
         _apiRequests = new ApiRequests(_loggerFactory.CreateLogger("ApiRequests"), _broker);

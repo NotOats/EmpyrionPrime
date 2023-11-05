@@ -46,6 +46,12 @@ app.Configure(config =>
             }
         }
     });
+
+    config.AddCommand<MessageCommand>("chat-message")
+        .WithAlias("message")
+        .WithDescription("Sends a chat message to the server")
+        .WithExample("message", "-q", "\"This is a global message!\"")
+        .WithExample("message", "-q", "--sender-name", "\"SenderNameOverride\"", "--channel", "SinglePlayer", "--recipient-id", "1182", "\"This is a private message!\"");
 });
 
 return await app.RunAsync(args);

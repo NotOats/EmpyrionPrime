@@ -26,6 +26,10 @@
     "Listen: json PlayerList": {
       "commandName": "Project",
       "commandLineArgs": "listen -o json -f Event_Player_List"
+    },
+    "ChatMessage - Help": {
+      "commandName": "Project",
+      "commandLineArgs": "chat-message --help"
     }
   }
 }

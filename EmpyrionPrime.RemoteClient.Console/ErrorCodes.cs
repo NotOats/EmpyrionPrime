@@ -6,6 +6,7 @@ public enum ErrorCodes : int
     Unknown = 1,
     ServerConnection = 20,
     RequestError = 21,
+    ApiError = 22,
     CommandSettings = 30,
     CommandPayload = 31,
 }
